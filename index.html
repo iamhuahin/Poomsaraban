@@ -1,986 +1,1186 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-bs-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบรับหนังสือ กอ.ปัตตานี</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              brand: {
-                50: '#f0fdf4',
-                100: '#dcfce7',
-                500: '#22c55e',
-                600: '#16a34a',
-                700: '#15803d',
-                800: '#166534',
-                900: '#14532d',
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ดาหลา</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #121212; color: #f8f9fa; font-family: 'Sarabun', sans-serif; }
+    .text-yellow { color: #ffeb3b; }
+    
+    .btn-green { background-color: #00C853; color: #000; font-weight: bold; border-radius: 12px; padding: 14px 20px; border: none; font-size: 1.2rem; transition: 0.3s; }
+    .btn-green:hover { background-color: #00a644; color: #000; transform: scale(1.02); }
+    .btn-darkgrey { background-color: #2d2d2d; color: #fff; font-weight: bold; border-radius: 12px; padding: 14px 20px; border: 1px solid #444; font-size: 1.2rem; transition: 0.3s; }
+    .btn-darkgrey:hover { background-color: #3d3d3d; color: #fff; transform: scale(1.02); }
+    
+    .form-control, .form-select { background-color: #2a2a2a; color: white; border-color: #444; font-size: 1.1rem; border-radius: 8px; }
+    .form-control:focus, .form-select:focus { background-color: #2a2a2a; color: white; border-color: #00C853; box-shadow: 0 0 0 0.25rem rgba(0, 200, 83, 0.25); }
+    
+    .page-section { display: none; }
+    .active-section { display: block; }
+    
+    #loadingOverlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9); z-index: 9999; display: none;
+      justify-content: center; align-items: center; flex-direction: column;
+    }
+    .pulsing-logo { width: 440px; height: auto; animation: pulse-img 1s infinite alternate; }
+    .pulsing-logo-small { width: 360px; height: auto; animation: pulse-img 1s infinite alternate; }
+    @keyframes pulse-img { from { transform: scale(0.92); opacity: 0.85; } to { transform: scale(1.08); opacity: 1; } }
+    
+    #btnBackToTop {
+      position: fixed; bottom: 30px; right: 30px; display: none; 
+      width: 55px; height: 55px; z-index: 1000; border-radius: 50%;
+      background-color: #ffc107; color: #212529; border: none;
+      font-size: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: 0.3s;
+    }
+    #btnBackToTop:hover { background-color: #e0a800; transform: scale(1.1); }
+    
+    .btn-edit-item {
+      background-color: #2a2a2a; color: #ffc107; border: 1px solid #444;
+      border-radius: 8px; padding: 4px 10px; font-size: 0.9rem; transition: 0.2s;
+      white-space: nowrap;
+    }
+    .btn-edit-item:hover {
+      background-color: #ffc107; color: #000; border-color: #ffc107;
+    }
+    
+    .badge-files-count {
+      background-color: #17a2b8; color: #fff; font-size: 0.85rem;
+      border-radius: 20px; padding: 3px 8px; vertical-align: middle;
+      font-weight: normal;
+    }
+  </style>
+</head>
+<body class="container py-4">
+
+  <!-- หน้า 1: HOME MENU -->
+  <div id="page-home" class="page-section active-section text-center">
+    <div class="mt-3 mb-4">
+      <img src="https://lh3.googleusercontent.com/d/10WI6mit7FqMj4egYW1gY_YobkKp1A9YU" alt="โลโก้" style="width: 100%; max-width: 320px; height: auto;">
+    </div>
+    <h5 class="mb-5 text-secondary">ระบบลงทะเบียน รับ - คัดแยก - จัดเก็บ - ค้นหา<br>เอกสารหนังสือราชการเข้า กอ.รมน.จังหวัดปัตตานี</h5>
+    
+    <div class="mx-auto" style="max-width: 500px;">
+      <div class="row g-3">
+        <div class="col-6 d-grid">
+          <button class="btn btn-green" onclick="playClickSound(); showPage('page-register');">ลงทะเบียนรับ</button>
+        </div>
+        <div class="col-6 d-grid">
+          <button class="btn btn-darkgrey" onclick="playClickSound(); showPage('page-sort');">คัดแยกหนังสือเข้า</button>
+        </div>
+        <div class="col-12 d-grid">
+          <button class="btn btn-darkgrey" onclick="playClickSound(); showPage('page-summary');">สรุปภาพรวมรายวัน</button>
+        </div>
+        <div class="col-12 d-grid mt-4">
+          <button class="btn btn-green fs-4" onclick="playClickSound(); showPage('page-search');"><i class="fa-solid fa-magnifying-glass me-2"></i> ค้นหาหนังสือ</button>
+        </div>
+      </div>
+    </div>
+    <div class="mt-5 text-muted text-center"><small>สร้างและพัฒนาโดย จ.ส.อ.รัตภูมิ รักทอง</small></div>
+  </div>
+
+  <!-- หน้า 2: ลงทะเบียนรับ -->
+  <div id="page-register" class="page-section">
+    <div class="text-end mb-4">
+      <button class="btn btn-outline-light rounded-pill px-4" onclick="playClickSound(); showPage('page-home');"><i class="fa-solid fa-house"></i> HOME</button>
+    </div>
+    <div class="text-center mb-4"><h1 class="display-4 fw-bold text-white">ทะเบียน <span id="regIdDisplay">...</span></h1></div>
+    <form id="regForm" onsubmit="handleFormSubmit(event)">
+      
+      <div class="text-center mb-4">
+         <label class="btn btn-outline-success fs-5 px-4 py-2 rounded-pill fw-bold">
+           <i class="fa-solid fa-cloud-arrow-up"></i> เลือกไฟล์อัปโหลด (สูงสุด 3 ไฟล์)
+           <input type="file" id="fileInput" class="d-none" multiple onchange="handleFileSelect(event)">
+         </label>
+         <div id="filePreviewContainer" class="d-flex flex-column gap-2 mt-3 mx-auto text-start" style="max-width: 500px;"></div>
+         <div id="fileCount" class="mt-2 text-info small">ไม่ต้องอัปโหลดไฟล์หากเป็นหนังสือที่ส่งโดยพลนำสาร</div>
+      </div>
+      
+      <div class="row mb-3 align-items-center">
+        <div class="col-md-3 text-md-end"><label class="col-form-label text-warning">ประเภทหนังสือ</label></div>
+        <div class="col-md-9 d-flex align-items-center gap-4">
+          <div class="form-check"><input class="form-check-input" type="radio" name="docType" id="docType1" value="ทั่วไป" required><label class="form-check-label text-white" for="docType1">ทั่วไป</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="docType" id="docType2" value="กระดาษเขียนข่าว"><label class="form-check-label text-white" for="docType2">กระดาษเขียนข่าว</label></div>
+        </div>
+      </div>
+      <div class="row mb-3 align-items-center">
+        <div class="col-md-3 text-md-end"><label class="col-form-label text-warning">ความเร่งด่วน</label></div>
+        <div class="col-md-9 d-flex align-items-center gap-3">
+          <div class="form-check"><input class="form-check-input" type="radio" name="urgent" value="ปกติ" required><label class="form-check-label text-white">ปกติ</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="urgent" value="ด่วน"><label class="form-check-label text-white">ด่วน</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="urgent" value="ด่วนมาก"><label class="form-check-label text-white">ด่วนมาก</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="urgent" value="ด่วนที่สุด"><label class="form-check-label text-white">ด่วนที่สุด</label></div>
+        </div>
+      </div>
+      <div class="row mb-3 align-items-center">
+        <label class="col-md-3 col-form-label text-md-end text-warning">ที่ของหนังสือ</label>
+        <div class="col-md-7"><input type="text" class="form-control" id="docNum" required></div>
+      </div>
+      
+      <div class="row mb-3 align-items-center">
+        <label class="col-md-3 col-form-label text-md-end text-warning">ลงวันที่</label>
+        <div class="col-md-4">
+          <input type="date" class="form-control" id="docDate" required>
+        </div>
+        <div class="col-md-5 mt-2 mt-md-0">
+          <div class="form-check">
+            <input class="form-check-input bg-secondary border-secondary" type="checkbox" id="isCoordination" onchange="toggleDateInput()">
+            <label class="form-check-label text-info" for="isCoordination">เพื่อการประสาน (ไม่ต้องลงวันที่)</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row mb-3 align-items-center">
+        <label class="col-md-3 col-form-label text-md-end text-warning">จาก</label>
+        <div class="col-md-7"><input type="text" class="form-control" id="sender" required></div>
+      </div>
+      <div class="row mb-3 align-items-center">
+        <label class="col-md-3 col-form-label text-md-end text-warning">เรื่อง</label>
+        <div class="col-md-9"><input type="text" class="form-control" id="subject" required></div>
+      </div>
+      
+      <div class="row mb-4 align-items-center">
+        <label class="col-md-3 col-form-label text-md-end text-warning">ผู้รับ</label>
+        <div class="col-md-5">
+          <input type="text" class="form-control" id="receiver" placeholder="พิมพ์ชื่อผู้รับ" required>
+        </div>
+      </div>
+      
+      <div class="text-center mt-5">
+        <button type="submit" class="btn btn-green w-50 rounded-pill">บันทึกข้อมูล</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- หน้า 3: คัดแยก -->
+  <div id="page-sort" class="page-section">
+    <div class="text-end mb-4">
+      <button class="btn btn-outline-light rounded-pill px-4" onclick="playClickSound(); showPage('page-home');"><i class="fa-solid fa-house"></i> HOME</button>
+    </div>
+    <div id="pendingContainer" class="d-flex flex-column gap-3 mb-4"></div>
+    <div class="text-end mt-4" id="btnSortConfirm" style="display: none;">
+      <button class="btn btn-green px-5 rounded-pill" onclick="submitSort()">บันทึกการคัดแยก</button>
+    </div>
+  </div>
+
+  <!-- หน้า 4: สรุปภาพรวม -->
+  <div id="page-summary" class="page-section">
+    <div class="text-end mb-4" id="summaryHomeBtnContainer">
+      <button class="btn btn-outline-light rounded-pill px-4" onclick="playClickSound(); showPage('page-home');"><i class="fa-solid fa-house"></i> HOME</button>
+    </div>
+    
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-6 d-flex align-items-center justify-content-center gap-3 bg-dark p-3 rounded-pill border border-secondary">
+        <label class="text-warning text-nowrap mb-0 fs-5 ps-3"><i class="fa-regular fa-calendar"></i> เลือกวันที่ดูสรุป:</label>
+        <div style="width: 200px;">
+          <input type="date" id="summaryDatePicker" class="form-control text-white" onchange="loadSummary(this.value)">
+        </div>
+      </div>
+    </div>
+
+    <h3 class="text-center text-white mb-4">หนังสือเข้าประจำวันที่ <span id="summaryDate" class="text-yellow">...</span></h3>
+    <div id="summaryContainer" class="d-flex flex-column gap-3"></div>
+    
+    <div class="text-center mt-5" id="summaryCopyBtnContainer">
+      <button class="btn btn-outline-success fs-5 px-5 rounded-pill" onclick="copyWebAppLink()"><i class="fa-solid fa-link"></i> คัดลอกลิงก์สรุป</button>
+    </div>
+    
+    <div class="mt-5 text-muted text-center"><small>สร้างและพัฒนาโดย จ.ส.อ.รัตภูมิ รักทอง</small></div>
+  </div>
+
+  <!-- หน้า 5: ค้นหา -->
+  <div id="page-search" class="page-section">
+    <div class="text-end mb-4">
+      <button class="btn btn-outline-light rounded-pill px-4" onclick="playClickSound(); showPage('page-home');"><i class="fa-solid fa-house"></i> HOME</button>
+    </div>
+    
+    <div class="card bg-dark border-secondary mb-4" style="border-radius: 16px;">
+      <div class="card-body p-4">
+        <form id="searchForm" onsubmit="handleSearchSubmit(event)">
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="mb-2 text-warning">เลือกฝ่าย (บังคับ)</label>
+              <select id="searchDept" class="form-select" required>
+                <option value="" disabled selected>-- เลือกฝ่าย --</option>
+                <option value="ฝบค.ฯ">ฝบค.ฯ</option>
+                <option value="ฝขว.ฯ">ฝขว.ฯ</option>
+                <option value="ฝนผ.ฯ">ฝนผ.ฯ</option>
+                <option value="ฝกบ.ฯ">ฝกบ.ฯ</option>
+                <option value="ฝมช.ฯ">ฝมช.ฯ</option>
+                <option value="ฝกง.ฯ">ฝกง.ฯ</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6">
+              <label class="mb-2 text-warning">ตั้งแต่วันที่</label>
+              <input type="date" id="searchStart" class="form-control">
+            </div>
+            <div class="col-6">
+              <label class="mb-2 text-warning">ถึงวันที่</label>
+              <input type="date" id="searchEnd" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-12">
+              <label class="mb-2 text-warning">คำค้นหา</label>
+              <input type="text" id="searchKeyword" class="form-control" placeholder="พิมพ์เลขทะเบียน หรือ คำในชื่อเรื่อง (เว้นว่างได้)">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-green w-100 rounded-pill"><i class="fa-solid fa-magnifying-glass"></i> เริ่มค้นหา</button>
+        </form>
+      </div>
+    </div>
+    
+    <hr class="border-secondary my-4">
+    <h5 class="text-yellow mb-3 text-center">ผลการค้นหา: <span id="searchResultCount" class="text-white">0 รายการ</span></h5>
+    <div id="searchResultsContainer" class="d-flex flex-column gap-3 mb-5"></div>
+  </div>
+
+  <!-- POPUP MODAL แก้ไขหนังสือ (พร้อมปุ่มลบเอกสาร) -->
+  <div class="modal fade" id="editDocModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content bg-dark text-white border-secondary" style="border-radius: 16px;">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title text-warning"><i class="fa-solid fa-pen-to-square"></i> แก้ไขข้อมูลหนังสือ (ทะเบียน <span id="editRegId"></span>)</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="editDocForm" onsubmit="handleEditFormSubmit(event)">
+            <input type="hidden" id="editRow">
+            
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="text-warning mb-1">ฝ่ายรับผิดชอบ (ย้ายฝ่าย)</label>
+                <select id="editDept" class="form-select bg-dark text-white border-success fw-bold" required>
+                  <option value="ฝบค.ฯ">ฝบค.ฯ (ฝ่ายบุคคล)</option>
+                  <option value="ฝขว.ฯ">ฝขว.ฯ (ฝ่ายการข่าว)</option>
+                  <option value="ฝนผ.ฯ">ฝนผ.ฯ (ฝ่ายนโยบายและแผน)</option>
+                  <option value="ฝกบ.ฯ">ฝกบ.ฯ (ฝ่ายส่งกำลังบำรุง)</option>
+                  <option value="ฝมช.ฯ">ฝมช.ฯ (ฝ่ายมวลชน)</option>
+                  <option value="ฝกง.ฯ">ฝกง.ฯ (ฝ่ายการเงิน)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">ความเร่งด่วน</label>
+                <select id="editUrgent" class="form-select bg-dark text-white" required>
+                  <option value="ปกติ">ปกติ</option>
+                  <option value="ด่วน">ด่วน</option>
+                  <option value="ด่วนมาก">ด่วนมาก</option>
+                  <option value="ด่วนที่สุด">ด่วนที่สุด</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="text-warning mb-1">ประเภทหนังสือ</label>
+                <select id="editDocType" class="form-select bg-dark text-white" required>
+                  <option value="ทั่วไป">หนังสือราชการ (ทั่วไป)</option>
+                  <option value="กระดาษเขียนข่าว">วิทยุ (กระดาษเขียนข่าว)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">ที่ของหนังสือ (เลขที่)</label>
+                <input type="text" id="editDocNum" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="text-warning mb-1">จาก</label>
+                <input type="text" id="editSender" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">ผู้รับ</label>
+                <input type="text" id="editReceiver" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="text-warning mb-1">เรื่อง</label>
+              <textarea id="editSubject" class="form-control" rows="2" required></textarea>
+            </div>
+
+            <div class="border border-secondary p-3 rounded mb-4" style="background-color: #1a1a1a;">
+              <h6 class="text-info mb-3"><i class="fa-solid fa-paperclip"></i> จัดการไฟล์แนบ (ลบไฟล์เก่า หรือ อัปโหลดไฟล์ใหม่แทนที่)</h6>
+              
+              <div class="row align-items-center mb-3">
+                <div class="col-md-3"><small class="text-secondary">ไฟล์แนบ 1:</small></div>
+                <div class="col-md-5" id="file1Status"></div>
+                <div class="col-md-4">
+                  <input type="file" id="editFile1" class="form-control form-control-sm">
+                </div>
+              </div>
+              
+              <div class="row align-items-center mb-3">
+                <div class="col-md-3"><small class="text-secondary">ไฟล์แนบ 2:</small></div>
+                <div class="col-md-5" id="file2Status"></div>
+                <div class="col-md-4">
+                  <input type="file" id="editFile2" class="form-control form-control-sm">
+                </div>
+              </div>
+
+              <div class="row align-items-center">
+                <div class="col-md-3"><small class="text-secondary">ไฟล์แนบ 3:</small></div>
+                <div class="col-md-5" id="file3Status"></div>
+                <div class="col-md-4">
+                  <input type="file" id="editFile3" class="form-control form-control-sm">
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <!-- ปุ่มลบเอกสารฉบับนี้ (สีแดง) -->
+              <button type="button" class="btn btn-outline-danger px-3 rounded-pill" onclick="confirmDeleteCurrentDoc()">
+                <i class="fa-solid fa-trash-can me-1"></i> ลบเอกสารฉบับนี้
+              </button>
+              
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-green px-4 rounded-pill">บันทึกการแก้ไข</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+    <img src="https://lh3.googleusercontent.com/d/1VQthGbAj9unc8lSrjaxQwOTZA7Akw9qx" class="pulsing-logo" alt="Loading...">
+    <h4 id="loadingText" class="text-white mt-4">กำลังดำเนินการ...</h4>
+    <button id="loadingCloseBtn" class="btn btn-green mt-4 px-5 rounded-pill d-none">ตกลง</button>
+  </div>
+
+  <button id="btnBackToTop" onclick="scrollToTop()" title="เลื่อนขึ้นบนสุด"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ==========================================
+    // สะพานเชื่อมโยง API สำหรับ GitHub Pages (Universal Bridge)
+    // ==========================================
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzjyjmmMIIapD8c_dJp3ITSVGAnkWFcfSwWg4Nx1I-VUS9jCw4lscVtIV5JdQ3Wn8sX/exec";
+
+    if (typeof google === "undefined" || !google.script || !google.script.run) {
+      window.google = window.google || {};
+      google.script = google.script || {};
+      
+      function createGasRunner(successHandler, failureHandler) {
+        const handler = {
+          withSuccessHandler(fn) { return createGasRunner(fn, failureHandler); },
+          withFailureHandler(fn) { return createGasRunner(successHandler, fn); }
+        };
+        return new Proxy(handler, {
+          get(target, prop) {
+            if (prop in target) return target[prop];
+            return async function(...args) {
+              try {
+                let payload = args.length === 1 ? args[0] : (args.length > 1 ? args : null);
+                let response = await fetch(GAS_API_URL, {
+                  method: "POST",
+                  headers: { "Content-Type": "text/plain;charset=utf-8" },
+                  body: JSON.stringify({ action: prop, data: payload })
+                });
+                let resJson = await response.json();
+                if (resJson.status === "success") {
+                  if (successHandler) successHandler(resJson.data);
+                } else {
+                  if (failureHandler) failureHandler(new Error(resJson.message));
+                  else console.error("GAS Error:", resJson.message);
+                }
+              } catch (err) {
+                if (failureHandler) failureHandler(err);
+                else console.error("Network Error:", err);
               }
-            }
+            };
           }
+        });
+      }
+
+      google.script.run = createGasRunner();
+      google.script.url = {
+        getLocation(cb) {
+          let urlParams = new URLSearchParams(window.location.search);
+          let params = {};
+          for (let [k, v] of urlParams.entries()) { params[k] = v; }
+          cb({ parameter: params });
+        }
+      };
+    }
+
+    // ==========================================
+    // ระบบสังเคราะห์เสียง (Web Audio API)
+    // ==========================================
+    let audioCtx = null;
+    let loadingSoundTimer = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playClickSound() {
+      try {
+        let ctx = getAudioContext();
+        let osc = ctx.createOscillator();
+        let gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(450, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } catch(e) {}
+    }
+
+    function playSuccessSound() {
+      try {
+        let ctx = getAudioContext();
+        let now = ctx.currentTime;
+        let notes = [587.33, 880];
+        notes.forEach((freq, idx) => {
+          let osc = ctx.createOscillator();
+          let gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + (idx * 0.12));
+          gain.gain.setValueAtTime(0, now + (idx * 0.12));
+          gain.gain.linearRampToValueAtTime(0.15, now + (idx * 0.12) + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.12) + 0.45);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + (idx * 0.12));
+          osc.stop(now + (idx * 0.12) + 0.5);
+        });
+      } catch(e) {}
+    }
+
+    function startLoadingSound() {
+      stopLoadingSound();
+      function pulse() {
+        try {
+          let ctx = getAudioContext();
+          let now = ctx.currentTime;
+          let osc = ctx.createOscillator();
+          let gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.exponentialRampToValueAtTime(240, now + 0.2);
+          osc.frequency.exponentialRampToValueAtTime(160, now + 0.5);
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.05, now + 0.25);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.6);
+        } catch(e) {}
+      }
+      pulse();
+      loadingSoundTimer = setInterval(pulse, 1000);
+    }
+
+    function stopLoadingSound() {
+      if (loadingSoundTimer) {
+        clearInterval(loadingSoundTimer);
+        loadingSoundTimer = null;
+      }
+    }
+
+    // ==========================================
+    // ตรวจจับ URL & จัดการหน้า
+    // ==========================================
+    let isSharedView = false;
+
+    function checkUrlParams() {
+      let urlParams = new URLSearchParams(window.location.search);
+      let p = urlParams.get('p');
+      let d = urlParams.get('d');
+
+      if (p === 'summary') {
+        activateSharedSummary(d);
+        return;
+      }
+
+      if (typeof google !== "undefined" && google.script && google.script.url) {
+        google.script.url.getLocation(function(location) {
+          if (location.parameter && location.parameter.p === 'summary') {
+            activateSharedSummary(location.parameter.d);
+          }
+        });
+      }
+    }
+
+    function activateSharedSummary(dateVal) {
+      isSharedView = true;
+      document.getElementById('summaryHomeBtnContainer').style.display = 'none';
+      document.getElementById('summaryCopyBtnContainer').style.display = 'none';
+      
+      if (dateVal) {
+        document.getElementById('summaryDatePicker').value = dateVal;
+      }
+      showPage('page-summary');
+    }
+
+    window.addEventListener('DOMContentLoaded', checkUrlParams);
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-section'));
+      document.getElementById(pageId).classList.add('active-section');
+      
+      if(pageId === 'page-register') {
+        document.getElementById('regIdDisplay').innerText = "...";
+        google.script.run.withSuccessHandler(id => document.getElementById('regIdDisplay').innerText = id).getNextId();
+        
+        let lastReceiver = localStorage.getItem('last_receiver');
+        if (lastReceiver) {
+          document.getElementById('receiver').value = lastReceiver;
+        }
+      } else if (pageId === 'page-sort') {
+        loadPendingDocs();
+      } else if (pageId === 'page-summary') {
+        if(!document.getElementById('summaryDatePicker').value) {
+           let d = new Date();
+           let localDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+           document.getElementById('summaryDatePicker').value = localDate;
+        }
+        loadSummary(document.getElementById('summaryDatePicker').value);
+      }
+    }
+
+    window.onscroll = function() {
+      let btn = document.getElementById("btnBackToTop");
+      if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        btn.style.display = "block";
+      } else {
+        btn.style.display = "none";
+      }
+    };
+    function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
+
+    let selectedFilesArray = [];
+
+    function handleFileSelect(e) {
+      let files = e.target.files;
+      for(let i=0; i<files.length; i++) {
+        if(selectedFilesArray.length < 3) {
+          selectedFilesArray.push(files[i]);
+        } else {
+          alert("เลือกได้สูงสุด 3 ไฟล์"); break;
         }
       }
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-        * { font-family: 'Sarabun', sans-serif; }
-        .tab-active {
-            border-bottom: 2px solid #16a34a;
-            color: #16a34a;
-            font-weight: 600;
-        }
-        .dark .tab-active {
-            border-bottom: 2px solid #22c55e;
-            color: #22c55e;
-        }
-    </style>
-</head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+      document.getElementById('fileInput').value = ""; 
+      renderFilePreview();
+    }
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm transition-colors duration-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('register')">
-                    <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/50 flex items-center justify-center text-brand-700 dark:text-brand-400 font-bold border border-brand-500/20 shadow-sm">
-                        กอ.
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-bold text-slate-800 dark:text-slate-100 leading-tight">ระบบรับหนังสือ</h1>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">กลุ่มงานอำนวยการ กอ.ปัตตานี</p>
-                    </div>
-                </div>
+    function getFileIconHtml(filename, fileType, fileObj) {
+      if(fileType.startsWith('image/')) {
+        return `<img src="${URL.createObjectURL(fileObj)}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;">`;
+      }
+      let lower = filename.toLowerCase();
+      if(lower.endsWith('.doc') || lower.endsWith('.docx')) {
+        return `<i class="fa-solid fa-file-word fs-2 text-primary"></i>`;
+      } else if(lower.endsWith('.xls') || lower.endsWith('.xlsx')) {
+        return `<i class="fa-solid fa-file-excel fs-2 text-success"></i>`;
+      } else if(lower.endsWith('.ppt') || lower.endsWith('.pptx')) {
+        return `<i class="fa-solid fa-file-powerpoint fs-2 text-warning"></i>`;
+      } else if(lower.endsWith('.pdf')) {
+        return `<i class="fa-solid fa-file-pdf fs-2 text-danger"></i>`;
+      } else if(lower.endsWith('.zip') || lower.endsWith('.rar')) {
+        return `<i class="fa-solid fa-file-zipper fs-2 text-info"></i>`;
+      }
+      return `<i class="fa-solid fa-file fs-2 text-secondary"></i>`;
+    }
 
-                <!-- Navigation Tabs -->
-                <nav class="hidden md:flex space-x-1" id="main-nav">
-                    <button onclick="switchTab('register')" id="tab-register" class="tab-btn px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-2">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> ลงทะเบียนรับ
-                    </button>
-                    <button onclick="switchTab('sort')" id="tab-sort" class="tab-btn px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-2">
-                        <i data-lucide="layers" class="w-4 h-4"></i> คัดแยกหนังสือ
-                    </button>
-                    <button onclick="switchTab('summary')" id="tab-summary" class="tab-btn px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-2">
-                        <i data-lucide="calendar-check" class="w-4 h-4"></i> สรุปงานประจำวัน
-                    </button>
-                    <button onclick="switchTab('search')" id="tab-search" class="tab-btn px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-2">
-                        <i data-lucide="search" class="w-4 h-4"></i> ค้นหาหนังสือ
-                    </button>
-                </nav>
-
-                <div class="flex items-center gap-2">
-                    <!-- Dark Mode Toggle Button -->
-                    <button id="theme-toggle" onclick="toggleDarkMode()" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="สลับโหมดมืด/สว่าง">
-                        <i data-lucide="moon" id="theme-toggle-dark-icon" class="w-5 h-5"></i>
-                        <i data-lucide="sun" id="theme-toggle-light-icon" class="w-5 h-5 hidden"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+    function renderFilePreview() {
+      let container = document.getElementById('filePreviewContainer');
+      container.innerHTML = "";
+      
+      if(selectedFilesArray.length === 0) {
+        document.getElementById('fileCount').innerText = "ไม่ต้องอัปโหลดไฟล์หากเป็นหนังสือที่ส่งโดยพลนำสาร";
+        return;
+      }
+      document.getElementById('fileCount').innerText = `เลือกแล้ว ${selectedFilesArray.length} ไฟล์`;
+      
+      selectedFilesArray.forEach((file, index) => {
+        let fileDiv = document.createElement('div');
+        fileDiv.className = "d-flex justify-content-between align-items-center bg-dark p-2 rounded border border-secondary";
         
-        <!-- Mobile Navigation Bar -->
-        <div class="flex md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 justify-around text-xs" id="mobile-nav">
-            <button onclick="switchTab('register')" id="m-tab-register" class="flex flex-col items-center py-1 text-brand-600 font-semibold">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i><span>ลงทะเบียน</span>
-            </button>
-            <button onclick="switchTab('sort')" id="m-tab-sort" class="flex flex-col items-center py-1 text-slate-500">
-                <i data-lucide="layers" class="w-5 h-5"></i><span>คัดแยก</span>
-            </button>
-            <button onclick="switchTab('summary')" id="m-tab-summary" class="flex flex-col items-center py-1 text-slate-500">
-                <i data-lucide="calendar-check" class="w-5 h-5"></i><span>สรุปงาน</span>
-            </button>
-            <button onclick="switchTab('search')" id="m-tab-search" class="flex flex-col items-center py-1 text-slate-500">
-                <i data-lucide="search" class="w-5 h-5"></i><span>ค้นหา</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+        let nameSpan = document.createElement('span');
+        nameSpan.className = "text-white text-truncate ms-2";
+        nameSpan.style.maxWidth = "250px";
+        nameSpan.innerText = file.name;
         
-        <!-- TAB 1: Register Form -->
-        <section id="pane-register" class="tab-pane max-w-2xl mx-auto">
-            <div class="flex justify-center mb-6">
-                <img src="https://lh3.googleusercontent.com/d/10WI6mit7FqMj4egYW1gY_YobkKp1A9YU" alt="ตราสัญลักษณ์ กอ.ปัตตานี" class="max-w-[320px] w-full h-auto drop-shadow-md">
-            </div>
+        let previewHtml = getFileIconHtml(file.name, file.type, file);
+        
+        let leftSide = document.createElement('div');
+        leftSide.className = "d-flex align-items-center";
+        leftSide.innerHTML = previewHtml;
+        leftSide.appendChild(nameSpan);
+        
+        let removeBtn = document.createElement('button');
+        removeBtn.type = "button";
+        removeBtn.className = "btn btn-sm btn-outline-danger rounded-circle";
+        removeBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+        removeBtn.onclick = function() { removeFile(index); };
+        
+        fileDiv.appendChild(leftSide);
+        fileDiv.appendChild(removeBtn);
+        container.appendChild(fileDiv);
+      });
+    }
 
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 transition-colors duration-200">
-                <div class="flex justify-between items-center mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
-                    <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        <i data-lucide="file-plus" class="w-5 h-5 text-brand-600"></i> ลงทะเบียนรับหนังสือใหม่
-                    </h2>
-                    <span class="text-xs bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300 px-2.5 py-1 rounded-full border border-brand-200 dark:border-brand-800/50">
-                        เลขรับอัตโนมัติ
-                    </span>
-                </div>
+    function removeFile(index) {
+      selectedFilesArray.splice(index, 1);
+      renderFilePreview();
+    }
 
-                <form id="register-form" onsubmit="handleRegisterSubmit(event)" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">เลขทะเบียนรับ</label>
-                            <input type="text" id="reg-id" readonly class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 font-bold focus:outline-none" value="กำลังดึงเลขรับ...">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">วันที่รับหนังสือ <span class="text-red-500">*</span></label>
-                            <input type="date" id="reg-date" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">เลขที่หนังสือภายนอก</label>
-                            <input type="text" id="reg-doc-no" placeholder="เช่น กษ 0601/1234" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">ลงวันที่ในหนังสือ <span class="text-red-500">*</span></label>
-                            <input type="date" id="reg-doc-date" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">จาก (หน่วยงานต้นสังกัด) <span class="text-red-500">*</span></label>
-                        <input type="text" id="reg-from" required placeholder="ระบุชื่อหน่วยงาน/บุคคลผู้ส่ง" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">ถึง <span class="text-red-500">*</span></label>
-                        <input type="text" id="reg-to" required value="นายกองค์การบริหารส่วนจังหวัดปัตตานี" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">เรื่อง <span class="text-red-500">*</span></label>
-                        <textarea id="reg-subject" required rows="3" placeholder="ระบุหัวข้อเรื่องตามหนังสือ" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">ไฟล์แนบหนังสือ (PDF หรือ รูปภาพ) <span class="text-red-500">*</span></label>
-                        <input type="file" id="reg-file" required accept="application/pdf,image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-slate-700 dark:file:text-slate-200">
-                    </div>
-
-                    <div class="pt-4">
-                        <button type="submit" id="btn-submit-reg" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all">
-                            <i data-lucide="check" class="w-5 h-5"></i> บันทึกข้อมูล
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <!-- TAB 2: Sort / Categorization Form -->
-        <section id="pane-sort" class="tab-pane hidden max-w-5xl mx-auto">
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 transition-colors duration-200">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                            <i data-lucide="layers" class="w-5 h-5 text-brand-600"></i> งานคัดแยกหนังสือ
-                        </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">เลือกหนังสือที่ยังไม่ได้คัดแยก เพื่อระบุหน่วยงานรับผิดชอบ</p>
-                    </div>
-                    <button onclick="loadPendingSortDocs()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors">
-                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> รีเฟรชรายการ
-                    </button>
-                </div>
-
-                <div id="sort-loading" class="text-center py-12 hidden">
-                    <i data-lucide="loader" class="w-8 h-8 animate-spin mx-auto text-brand-600 mb-2"></i>
-                    <p class="text-sm text-slate-500">กำลังโหลดรายการรอคัดแยก...</p>
-                </div>
-
-                <div id="sort-empty" class="text-center py-12 hidden">
-                    <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400">
-                        <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-500"></i>
-                    </div>
-                    <p class="text-base font-semibold text-slate-700 dark:text-slate-300">ไม่มีหนังสือค้างคัดแยก</p>
-                    <p class="text-xs text-slate-400 mt-1">หนังสือทั้งหมดได้รับการจัดสรรฝ่ายเรียบร้อยแล้ว</p>
-                </div>
-
-                <div id="sort-content" class="space-y-6">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">เลือกหนังสือที่ต้องการคัดแยก <span class="text-red-500">*</span></label>
-                        <select id="sort-doc-select" onchange="handleSortSelectDoc(this.value)" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2.5 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                            <option value="">-- กรุณาเลือกหนังสือ --</option>
-                        </select>
-                    </div>
-
-                    <!-- Selected Doc Detail Box -->
-                    <div id="sort-selected-detail" class="hidden bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm space-y-2">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                            <div><span class="text-slate-500">เลขทะเบียนรับ:</span> <span id="s-reg-id" class="font-bold text-brand-700 dark:text-brand-400"></span></div>
-                            <div><span class="text-slate-500">วันที่รับ:</span> <span id="s-reg-date" class="font-medium text-slate-800 dark:text-slate-200"></span></div>
-                            <div><span class="text-slate-500">เลขที่หนังสือ:</span> <span id="s-doc-no" class="font-medium text-slate-800 dark:text-slate-200"></span></div>
-                            <div><span class="text-slate-500">จาก:</span> <span id="s-from" class="font-medium text-slate-800 dark:text-slate-200"></span></div>
-                        </div>
-                        <div class="pt-2 border-t border-slate-200 dark:border-slate-700 text-xs">
-                            <span class="text-slate-500">เรื่อง:</span>
-                            <p id="s-subject" class="font-medium text-slate-800 dark:text-slate-200 mt-0.5"></p>
-                        </div>
-                        <div class="pt-2 flex justify-end">
-                            <a id="s-link" href="#" target="_blank" class="inline-flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 dark:text-brand-400 font-semibold underline">
-                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> เปิดดูไฟล์หนังสือต้นฉบับ
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Sort Allocation Form -->
-                    <form id="sort-form" onsubmit="handleSortSubmit(event)" class="space-y-4 pt-2">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">มอบหมายสำนัก/กอง/กลุ่มงาน <span class="text-red-500">*</span></label>
-                            <select id="sort-division" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                                <option value="">-- เลือกหน่วยงานรับผิดชอบ --</option>
-                                <option value="สำนักปลัด อบจ.">สำนักปลัด อบจ.</option>
-                                <option value="กองคลัง">กองคลัง</option>
-                                <option value="กองช่าง">กองช่าง</option>
-                                <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
-                                <option value="กองการศึกษา ศาสนาและวัฒนธรรม">กองการศึกษา ศาสนาและวัฒนธรรม</option>
-                                <option value="กองสาธารณสุข">กองสาธารณสุข</option>
-                                <option value="กองพัสดุและทรัพย์สิน">กองพัสดุและทรัพย์สิน</option>
-                                <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                                <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
-                                <option value="กลุ่มงานอำนวยการ">กลุ่มงานอำนวยการ</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">หมายเหตุ / ความเห็นการส่งมอบ</label>
-                            <input type="text" id="sort-remark" placeholder="เช่น ด่วนที่สุด, ดำเนินการตามระเบียบ" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                        </div>
-
-                        <div class="pt-4 flex gap-3">
-                            <button type="submit" id="btn-submit-sort" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all">
-                                <i data-lucide="check" class="w-5 h-5"></i> บันทึกผลการคัดแยก
-                            </button>
-                            <button type="button" onclick="openDeleteModalForSelectedDoc()" id="btn-del-sort" class="hidden px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/40 dark:hover:bg-red-900/60 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-800 font-medium transition-colors flex items-center gap-1.5" title="ลบหนังสือฉบับนี้">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i> ลบหนังสือ
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 3: Daily Summary -->
-        <section id="pane-summary" class="tab-pane hidden max-w-6xl mx-auto">
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 transition-colors duration-200">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                            <i data-lucide="calendar-check" class="w-5 h-5 text-brand-600"></i> สรุปงานประจำวัน
-                        </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">สรุปรายการรับหนังสือและสถิติแยกตามหน่วยงาน</p>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <input type="date" id="summary-date" onchange="loadDailySummary()" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                        <button onclick="copySummaryShareLink()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors" title="คัดลอกลิงก์สรุปประจำวันเพื่อแชร์">
-                            <i data-lucide="share-2" class="w-3.5 h-3.5"></i> แชร์
-                        </button>
-                    </div>
-                </div>
-
-                <div id="summary-loading" class="text-center py-12 hidden">
-                    <i data-lucide="loader" class="w-8 h-8 animate-spin mx-auto text-brand-600 mb-2"></i>
-                    <p class="text-sm text-slate-500">กำลังประมวลผลสรุปข้อมูล...</p>
-                </div>
-
-                <div id="summary-content" class="space-y-6">
-                    <!-- Stat Cards -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div class="bg-brand-50 dark:bg-brand-950/30 border border-brand-200 dark:border-brand-900/50 rounded-xl p-4">
-                            <p class="text-xs text-brand-700 dark:text-brand-300 font-medium">รับทั้งหมดวันนี้</p>
-                            <p id="stat-total" class="text-2xl font-black text-brand-800 dark:text-brand-200 mt-1">0</p>
-                        </div>
-                        <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-xl p-4">
-                            <p class="text-xs text-blue-700 dark:text-blue-300 font-medium">คัดแยกแล้ว</p>
-                            <p id="stat-sorted" class="text-2xl font-black text-blue-800 dark:text-blue-200 mt-1">0</p>
-                        </div>
-                        <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl p-4">
-                            <p class="text-xs text-amber-700 dark:text-amber-300 font-medium">รอคัดแยก</p>
-                            <p id="stat-pending" class="text-2xl font-black text-amber-800 dark:text-amber-200 mt-1">0</p>
-                        </div>
-                        <div class="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/50 rounded-xl p-4">
-                            <p class="text-xs text-purple-700 dark:text-purple-300 font-medium">หน่วยงานรับมอบ</p>
-                            <p id="stat-divisions" class="text-2xl font-black text-purple-800 dark:text-purple-200 mt-1">0</p>
-                        </div>
-                    </div>
-
-                    <!-- Summary Table -->
-                    <div class="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
-                        <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
-                            <thead class="bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-200 font-semibold border-b border-slate-200 dark:border-slate-700">
-                                <tr>
-                                    <th class="px-3 py-3 w-16 text-center">ลำดับ</th>
-                                    <th class="px-3 py-3 w-24">เลขรับ</th>
-                                    <th class="px-3 py-3 w-28">เลขที่หนังสือ</th>
-                                    <th class="px-3 py-3 w-36">จาก</th>
-                                    <th class="px-4 py-3">เรื่อง</th>
-                                    <th class="px-3 py-3 w-36">ส่งมอบให้</th>
-                                    <th class="px-3 py-3 w-16 text-center">ไฟล์</th>
-                                </tr>
-                            </thead>
-                            <tbody id="summary-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-800">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 4: Search Documents -->
-        <section id="pane-search" class="tab-pane hidden max-w-6xl mx-auto">
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 transition-colors duration-200">
-                <div class="flex justify-between items-center mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                            <i data-lucide="search" class="w-5 h-5 text-brand-600"></i> ค้นหาหนังสือ
-                        </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">สืบค้นจากเลขรับ, เลขที่หนังสือ, หน่วยงาน หรือเรื่อง</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-2 mb-6">
-                    <input type="text" id="search-query" onkeypress="if(event.key==='Enter') executeSearch()" placeholder="พิมพ์คำค้นหา..." class="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                    <button onclick="executeSearch()" class="bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-lg text-sm flex items-center gap-1.5 transition-colors">
-                        <i data-lucide="search" class="w-4 h-4"></i> ค้นหา
-                    </button>
-                </div>
-
-                <div id="search-loading" class="text-center py-12 hidden">
-                    <i data-lucide="loader" class="w-8 h-8 animate-spin mx-auto text-brand-600 mb-2"></i>
-                    <p class="text-sm text-slate-500">กำลังค้นหาข้อมูล...</p>
-                </div>
-
-                <div id="search-results-area" class="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl hidden">
-                    <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
-                        <thead class="bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-200 font-semibold border-b border-slate-200 dark:border-slate-700">
-                            <tr>
-                                <th class="px-3 py-3 w-20">เลขรับ</th>
-                                <th class="px-3 py-3 w-24">วันที่รับ</th>
-                                <th class="px-3 py-3 w-28">เลขที่หนังสือ</th>
-                                <th class="px-3 py-3 w-36">จาก</th>
-                                <th class="px-4 py-3">เรื่อง</th>
-                                <th class="px-3 py-3 w-32">ส่งมอบ</th>
-                                <th class="px-3 py-3 w-20 text-center">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="search-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-800">
-                            <!-- Results -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Edit / Detail Modal -->
-    <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-slate-800 rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">
-                <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    <i data-lucide="edit-3" class="w-4 h-4 text-brand-600"></i> แก้ไขรายละเอียดหนังสือ
-                </h3>
-                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <form id="edit-form" onsubmit="handleEditSubmit(event)" class="space-y-3 text-xs">
-                <input type="hidden" id="edit-row-index">
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">เลขทะเบียนรับ</label>
-                        <input type="text" id="edit-reg-id" readonly class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 font-bold">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">วันที่รับ</label>
-                        <input type="date" id="edit-reg-date" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">เลขที่หนังสือ</label>
-                        <input type="text" id="edit-doc-no" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">ลงวันที่</label>
-                        <input type="date" id="edit-doc-date" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">จาก</label>
-                    <input type="text" id="edit-from" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
-                </div>
-
-                <div>
-                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">ถึง</label>
-                    <input type="text" id="edit-to" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
-                </div>
-
-                <div>
-                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">เรื่อง</label>
-                    <textarea id="edit-subject" required rows="3" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5"></textarea>
-                </div>
-
-                <div>
-                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">หน่วยงานรับมอบ</label>
-                    <select id="edit-division" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
-                        <option value="">-- ยังไม่คัดแยก --</option>
-                        <option value="สำนักปลัด อบจ.">สำนักปลัด อบจ.</option>
-                        <option value="กองคลัง">กองคลัง</option>
-                        <option value="กองช่าง">กองช่าง</option>
-                        <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
-                        <option value="กองการศึกษา ศาสนาและวัฒนธรรม">กองการศึกษา ศาสนาและวัฒนธรรม</option>
-                        <option value="กองสาธารณสุข">กองสาธารณสุข</option>
-                        <option value="กองพัสดุและทรัพย์สิน">กองพัสดุและทรัพย์สิน</option>
-                        <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
-                        <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
-                        <option value="กลุ่มงานอำนวยการ">กลุ่มงานอำนวยการ</option>
-                    </select>
-                </div>
-
-                <div class="pt-4 flex gap-2">
-                    <button type="submit" id="btn-save-edit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2 rounded-lg transition-colors">
-                        บันทึกการแก้ไข
-                    </button>
-                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                        ยกเลิก
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Confirm Delete Modal -->
-    <div id="delete-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-slate-800 rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200 dark:border-slate-700 text-center">
-            <div class="w-12 h-12 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center mx-auto mb-3 text-red-600 dark:text-red-400">
-                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
-            </div>
-            <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-1">ยืนยันการลบหนังสือ</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
-                คุณแน่ใจหรือไม่ว่าต้องการลบหนังสือเลขรับ <span id="del-modal-reg-id" class="font-bold text-red-600"></span>? การกระทำนี้ไม่สามารถย้อนกลับได้
-            </p>
-            <div class="flex gap-2">
-                <button onclick="confirmExecuteDelete()" id="btn-confirm-delete" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg text-xs transition-colors">
-                    ยืนยันลบ
-                </button>
-                <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-colors">
-                    ยกเลิก
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Global Loading Overlay -->
-    <div id="loading-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex flex-col items-center justify-center hidden">
-        <img src="https://lh3.googleusercontent.com/d/1VQthGbAj9unc8lSrjaxQwOTZA7Akw9qx" alt="กำลังประมวลผล" class="w-[360px] md:w-[440px] max-w-[90vw] h-auto drop-shadow-2xl mb-4">
-        <p id="loading-text" class="text-white text-base font-medium tracking-wide animate-pulse">กำลังบันทึกข้อมูล กรุณารอสักครู่...</p>
-    </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        // Google Apps Script Web App Deployment Endpoint
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzjyjmmMIIapD8c_dJp3ITSVGAnkWFcfSwWg4Nx1I-VUS9jCw4lscVtIV5JdQ3Wn8sX/exec";
-
-        let pendingDocsCache = [];
-        let itemToDelete = null;
-
-        // Initialize Lucide Icons & Default Values
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            initTheme();
-            setTodayDefaults();
-
-            // Check URL parameters for direct view (e.g. daily summary link)
-            const urlParams = new URLSearchParams(window.location.search);
-            const p = urlParams.get('p');
-            const d = urlParams.get('d');
-            if (p === 'summary') {
-                if (d) document.getElementById('summary-date').value = d;
-                switchTab('summary');
-            } else {
-                fetchNextRegistrationId();
-            }
+    function getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader(); reader.readAsDataURL(file);
+        reader.onload = () => resolve({ 
+          base64: reader.result.split(',')[1], 
+          mimeType: file.type || 'application/octet-stream',
+          filename: file.name
         });
+        reader.onerror = error => reject(error);
+      });
+    }
 
-        // Universal API Bridge to GAS (using text/plain to avoid CORS preflight options)
-        async function callGasApi(action, data = {}) {
-            try {
-                const response = await fetch(GAS_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: action, data: data })
-                });
-                return await response.json();
-            } catch (err) {
-                console.error("API Call Error:", err);
-                return { success: false, message: "เชื่อมต่อเซิร์ฟเวอร์ขัดข้อง: " + err.toString() };
-            }
-        }
+    function toggleDateInput() {
+       let isChecked = document.getElementById('isCoordination').checked;
+       let dateInput = document.getElementById('docDate');
+       if (isChecked) {
+          dateInput.value = "";
+          dateInput.disabled = true;
+          dateInput.required = false;
+       } else {
+          dateInput.disabled = false;
+          dateInput.required = true;
+       }
+    }
 
-        // Web Audio Feedback (Tone Synthesizer)
-        function playTone(type) {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                const now = ctx.currentTime;
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      playClickSound();
+      
+      document.getElementById('loadingOverlay').style.display = 'flex';
+      startLoadingSound();
+      
+      let payload = {
+        docType: document.querySelector('input[name="docType"]:checked').value,
+        urgent: document.querySelector('input[name="urgent"]:checked').value,
+        docNum: document.getElementById('docNum').value,
+        docDate: document.getElementById('docDate').value,
+        isCoordination: document.getElementById('isCoordination').checked,
+        sender: document.getElementById('sender').value,
+        subject: document.getElementById('subject').value,
+        receiver: document.getElementById('receiver').value
+      };
 
-                if (type === 'success') {
-                    osc.frequency.setValueAtTime(523.25, now);
-                    osc.frequency.setValueAtTime(659.25, now + 0.1);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-                    osc.start(now);
-                    osc.stop(now + 0.3);
-                } else if (type === 'error') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(220, now);
-                    osc.frequency.setValueAtTime(164.81, now + 0.15);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
-                    osc.start(now);
-                    osc.stop(now + 0.35);
-                }
-            } catch (e) {
-                console.log("Audio not supported or blocked by user interaction");
-            }
-        }
+      for(let i=0; i<selectedFilesArray.length; i++) {
+        payload["file"+(i+1)] = await getBase64(selectedFilesArray[i]);
+      }
+      
+      localStorage.setItem('last_receiver', payload.receiver);
+      google.script.run.withSuccessHandler(onSuccess).saveRegistration(payload);
+    }
 
-        // Dark Mode Logic
-        function initTheme() {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
-                document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
-                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
-            }
-        }
+    let currentResponse = null;
+    function onSuccess(res) {
+      stopLoadingSound();
+      playSuccessSound();
+      
+      currentResponse = res;
+      document.getElementById('loadingText').innerHTML = `<i class="fa-solid fa-circle-check text-success fs-1 mb-2"></i><br>บันทึกข้อมูลเรียบร้อย`;
+      document.querySelector('#loadingOverlay img').style.animation = 'none';
+      
+      let btn = document.getElementById('loadingCloseBtn');
+      btn.classList.remove('d-none');
+      btn.onclick = finishLoading; 
+    }
 
-        function toggleDarkMode() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
-                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
-                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
-                document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
-                document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
-            }
-        }
+    function getDisplayTitle(docType, subject, urgent) {
+       let prefix = (docType === "กระดาษเขียนข่าว" || docType === "วิทยุ") ? "วิทยุ " : "";
+       let urgentTag = (urgent && urgent !== "ปกติ") ? ` <span class="text-danger fw-bold ms-2">${urgent}</span>` : "";
+       return { prefix, urgentTag };
+    }
 
-        // Navigation Tabs
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-            const targetPane = document.getElementById('pane-' + tabId);
-            if (targetPane) targetPane.classList.remove('hidden');
+    function finishLoading() {
+      playClickSound();
+      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('loadingText').innerText = "กำลังดำเนินการ...";
+      document.querySelector('#loadingOverlay img').style.animation = 'pulse-img 1s infinite alternate';
+      document.getElementById('loadingCloseBtn').classList.add('d-none');
+      
+      let res = currentResponse;
+      let { prefix, urgentTag } = getDisplayTitle(res.docType, res.subject, res.urgent);
+      
+      Swal.fire({
+        background: '#1a1a1a', color: '#fff',
+        html: `
+          <div style="font-size: 1.8rem; font-weight: bold; line-height: 1.6;">
+            <div style="color: #00C853;">เลขทะเบียน ${res.regId}</div>
+            <div>${res.dateTh}</div>
+            <div class="text-secondary fs-5">${res.timeStr}</div>
+            <div class="mt-3">${prefix}เรื่อง ${res.subject}${urgentTag}</div>
+          </div>
+        `,
+        confirmButtonColor: '#00C853',
+        confirmButtonText: '<span class="text-dark fw-bold">ตกลง</span>',
+        allowOutsideClick: false
+      }).then(() => {
+        document.getElementById('regForm').reset();
+        document.getElementById('isCoordination').checked = false;
+        toggleDateInput(); 
+        selectedFilesArray = [];
+        renderFilePreview();
+        showPage('page-home');
+      });
+    }
 
-            document.querySelectorAll('#main-nav .tab-btn').forEach(btn => btn.classList.remove('tab-active'));
-            const activeNavBtn = document.getElementById('tab-' + tabId);
-            if (activeNavBtn) activeNavBtn.classList.add('tab-active');
+    const loadingHtml = `
+      <div class="text-center mt-5">
+        <img src="https://lh3.googleusercontent.com/d/1VQthGbAj9unc8lSrjaxQwOTZA7Akw9qx" class="pulsing-logo-small mb-3" alt="Loading...">
+        <h4 class="text-muted">กำลังโหลดข้อมูล...</h4>
+      </div>
+    `;
 
-            if (tabId === 'register') {
-                fetchNextRegistrationId();
-            } else if (tabId === 'sort') {
-                loadPendingSortDocs();
-            } else if (tabId === 'summary') {
-                loadDailySummary();
-            }
-            lucide.createIcons();
-        }
+    function openDocumentFiles(subject, file1, file2, file3) {
+      playClickSound();
+      if (file1 === "รับหนังสือจากพลนำสาร") {
+        Swal.fire({
+          title: 'รับหนังสือจากพลนำสาร',
+          text: 'เอกสารฉบับนี้ไม่มีไฟล์อิเล็กทรอนิกส์ครับ (เป็นเอกสารตัวจริงส่งมอบโดยตรง)',
+          icon: 'info',
+          background: '#1a1a1a', color: '#fff', confirmButtonColor: '#00C853'
+        });
+        return;
+      }
 
-        function setTodayDefaults() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('reg-date').value = today;
-            document.getElementById('reg-doc-date').value = today;
-            document.getElementById('summary-date').value = today;
-        }
+      let validFiles = [];
+      if (file1 && file1.includes("http")) validFiles.push({ label: 'ไฟล์ที่ 1 (ไฟล์หลัก)', url: file1 });
+      if (file2 && file2.includes("http")) validFiles.push({ label: 'ไฟล์ที่ 2 (ไฟล์แนบ)', url: file2 });
+      if (file3 && file3.includes("http")) validFiles.push({ label: 'ไฟล์ที่ 3 (ไฟล์แนบ)', url: file3 });
 
-        function showLoading(text) {
-            document.getElementById('loading-text').innerText = text || 'กำลังประมวลผล กรุณารอสักครู่...';
-            document.getElementById('loading-overlay').classList.remove('hidden');
-        }
+      if (validFiles.length === 1) {
+        window.open(validFiles[0].url, '_blank');
+        return;
+      }
 
-        function hideLoading() {
-            document.getElementById('loading-overlay').classList.add('hidden');
-        }
+      if (validFiles.length > 1) {
+        let buttonsHtml = validFiles.map((f, i) => `
+          <a href="${f.url}" target="_blank" class="btn btn-outline-success w-100 py-2 mb-2 text-start fs-5" onclick="playClickSound(); Swal.close();">
+            <i class="fa-solid fa-paperclip me-2 text-info"></i> ${f.label}
+          </a>
+        `).join('');
 
-        // TAB 1: Register Functions
-        async function fetchNextRegistrationId() {
-            const res = await callGasApi('getNextId');
-            if (res && res.success) {
-                document.getElementById('reg-id').value = res.nextId;
-            } else {
-                document.getElementById('reg-id').value = "ไม่สามารถดึงเลขได้";
-            }
-        }
+        Swal.fire({
+          title: '<i class="fa-solid fa-folder-open text-warning"></i> เลือกไฟล์ที่ต้องการเปิด',
+          html: `
+            <div class="text-start text-white mb-3 small text-muted text-truncate">เรื่อง: ${subject}</div>
+            <div class="d-flex flex-column">${buttonsHtml}</div>
+          `,
+          showConfirmButton: false,
+          showCloseButton: true,
+          background: '#1a1a1a',
+          color: '#fff'
+        });
+      }
+    }
 
-        function readFileAsBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const base64Data = reader.result.split(',')[1];
-                    resolve({
-                        base64: base64Data,
-                        mimeType: file.type,
-                        name: file.name
-                    });
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
+    function loadPendingDocs() {
+      document.getElementById('pendingContainer').innerHTML = loadingHtml;
+      document.getElementById('btnSortConfirm').style.display = 'none';
+      google.script.run
+        .withSuccessHandler(renderPendingDocs)
+        .withFailureHandler(err => document.getElementById('pendingContainer').innerHTML = '<h3 class="text-center text-danger mt-5">ข้อผิดพลาด: ' + err.message + '</h3>')
+        .getPendingDocs();
+    }
 
-        async function handleRegisterSubmit(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('reg-file');
-            if (!fileInput.files || fileInput.files.length === 0) {
-                alert('กรุณาแนบไฟล์หนังสือ');
-                return;
-            }
+    function renderPendingDocs(data) {
+      pendingData = data;
+      let container = document.getElementById('pendingContainer');
+      if(data.length === 0) {
+        container.innerHTML = '<h3 class="text-center text-success mt-5"><i class="fa-solid fa-check-circle"></i> ไม่มีหนังสือค้างคัดแยกครับ</h3>';
+        return;
+      }
+      document.getElementById('btnSortConfirm').style.display = 'block';
+      let html = '';
+      data.forEach((item, index) => {
+        let { prefix, urgentTag } = getDisplayTitle(item.docType, item.subject, item.urgent);
+        html += `
+          <div class="d-flex flex-wrap align-items-center justify-content-between p-3 rounded" style="background-color: #2a2a2a; border: 1px solid #444;">
+            <div class="fs-5 text-white">
+              <span class="text-yellow fw-bold">(${item.regId})</span> (${item.dateTh}) 
+              (${prefix}เรื่อง ${item.subject}${urgentTag}) ผู้รับ (${item.receiver})
+            </div>
+            <div class="mt-2 mt-md-0">
+              <select class="form-select bg-dark text-white fw-bold" id="sort-select-${index}" onchange="checkColor(this)">
+                <option value="" disabled selected>เลือกหน่วยรับ</option>
+                <option value="ฝบค.ฯ">ฝบค.ฯ</option>
+                <option value="ฝขว.ฯ">ฝขว.ฯ</option>
+                <option value="ฝนผ.ฯ">ฝนผ.ฯ</option>
+                <option value="ฝกบ.ฯ">ฝกบ.ฯ</option>
+                <option value="ฝมช.ฯ">ฝมช.ฯ</option>
+                <option value="ฝกง.ฯ">ฝกง.ฯ</option>
+              </select>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
 
-            showLoading('กำลังอัปโหลดไฟล์และบันทึกข้อมูล...');
-            try {
-                const fileObj = await readFileAsBase64(fileInput.files[0]);
-                const payload = {
-                    date: document.getElementById('reg-date').value,
-                    docNo: document.getElementById('reg-doc-no').value,
-                    docDate: document.getElementById('reg-doc-date').value,
-                    from: document.getElementById('reg-from').value,
-                    to: document.getElementById('reg-to').value,
-                    subject: document.getElementById('reg-subject').value,
-                    fileData: fileObj
-                };
+    function checkColor(selectElem) {
+      playClickSound();
+      if(selectElem.value !== "") {
+        selectElem.classList.remove('bg-dark', 'text-white');
+        selectElem.classList.add('bg-success', 'text-white');
+      }
+    }
 
-                const res = await callGasApi('saveRegistration', payload);
-                hideLoading();
+    function submitSort() {
+      playClickSound();
+      let assignments = [];
+      let isAllSelected = true;
+      pendingData.forEach((item, index) => {
+        let val = document.getElementById(`sort-select-${index}`).value;
+        if(val !== "") assignments.push({ row: item.row, dept: val });
+        else isAllSelected = false;
+      });
 
-                if (res && res.success) {
-                    playTone('success');
-                    alert('บันทึกข้อมูลเรียบร้อยแล้ว! เลขทะเบียนรับคือ: ' + res.registeredId);
-                    document.getElementById('register-form').reset();
-                    setTodayDefaults();
-                    fetchNextRegistrationId();
-                } else {
-                    playTone('error');
-                    alert('เกิดข้อผิดพลาด: ' + (res.message || 'ไม่สามารถบันทึกได้'));
-                }
-            } catch (err) {
-                hideLoading();
-                playTone('error');
-                alert('เกิดข้อผิดพลาดในการประมวลผลไฟล์: ' + err.toString());
-            }
-        }
+      if(assignments.length === 0) return Swal.fire('ข้อผิดพลาด', 'กรุณาเลือกฝ่ายอย่างน้อย 1 รายการ', 'warning');
 
-        // TAB 2: Sort Functions
-        async function loadPendingSortDocs() {
-            document.getElementById('sort-loading').classList.remove('hidden');
-            document.getElementById('sort-empty').classList.add('hidden');
-            document.getElementById('sort-content').classList.add('hidden');
-            document.getElementById('sort-selected-detail').classList.add('hidden');
-            document.getElementById('btn-del-sort').classList.add('hidden');
-
-            const res = await callGasApi('getPendingDocs');
-            document.getElementById('sort-loading').classList.add('hidden');
-
-            if (res && res.success && res.docs && res.docs.length > 0) {
-                pendingDocsCache = res.docs;
-                const select = document.getElementById('sort-doc-select');
-                select.innerHTML = '<option value="">-- กรุณาเลือกหนังสือ (' + res.docs.length + ' รายการ) --</option>';
-                res.docs.forEach(doc => {
-                    const opt = document.createElement('option');
-                    opt.value = doc.rowIndex;
-                    opt.textContent = `[เลขรับ ${doc.regId}] ${doc.subject} (จาก: ${doc.from})`;
-                    select.appendChild(opt);
-                });
-                document.getElementById('sort-content').classList.remove('hidden');
-            } else {
-                document.getElementById('sort-empty').classList.remove('hidden');
-            }
-            lucide.createIcons();
-        }
-
-        function handleSortSelectDoc(rowIndex) {
-            const doc = pendingDocsCache.find(d => String(d.rowIndex) === String(rowIndex));
-            const detailBox = document.getElementById('sort-selected-detail');
-            const delBtn = document.getElementById('btn-del-sort');
-
-            if (doc) {
-                document.getElementById('s-reg-id').textContent = doc.regId;
-                document.getElementById('s-reg-date').textContent = doc.date;
-                document.getElementById('s-doc-no').textContent = doc.docNo || '-';
-                document.getElementById('s-from').textContent = doc.from;
-                document.getElementById('s-subject').textContent = doc.subject;
-                
-                const link = document.getElementById('s-link');
-                if (doc.fileUrl) {
-                    link.href = doc.fileUrl;
-                    link.classList.remove('hidden');
-                } else {
-                    link.classList.add('hidden');
-                }
-
-                detailBox.classList.remove('hidden');
-                delBtn.classList.remove('hidden');
-            } else {
-                detailBox.classList.add('hidden');
-                delBtn.classList.add('hidden');
-            }
-            lucide.createIcons();
-        }
-
-        async function handleSortSubmit(e) {
-            e.preventDefault();
-            const rowIndex = document.getElementById('sort-doc-select').value;
-            const division = document.getElementById('sort-division').value;
-            const remark = document.getElementById('sort-remark').value;
-
-            if (!rowIndex) {
-                alert('กรุณาเลือกหนังสือที่ต้องการคัดแยก');
-                return;
-            }
-
-            showLoading('กำลังบันทึกการคัดแยก...');
-            const res = await callGasApi('processSort', {
-                rowIndex: rowIndex,
-                division: division,
-                remark: remark
-            });
-            hideLoading();
-
-            if (res && res.success) {
-                playTone('success');
-                alert('บันทึกผลการคัดแยกเรียบร้อยแล้ว');
-                document.getElementById('sort-form').reset();
-                loadPendingSortDocs();
-            } else {
-                playTone('error');
-                alert('เกิดข้อผิดพลาด: ' + (res.message || 'ไม่สามารถบันทึกได้'));
-            }
-        }
-
-        // TAB 3: Summary Functions
-        async function loadDailySummary() {
-            const dateVal = document.getElementById('summary-date').value;
-            document.getElementById('summary-loading').classList.remove('hidden');
-            document.getElementById('summary-content').classList.add('hidden');
-
-            const res = await callGasApi('getDailySummary', { date: dateVal });
-            document.getElementById('summary-loading').classList.add('hidden');
-
-            if (res && res.success) {
-                document.getElementById('stat-total').textContent = res.stats.total || 0;
-                document.getElementById('stat-sorted').textContent = res.stats.sorted || 0;
-                document.getElementById('stat-pending').textContent = res.stats.pending || 0;
-                document.getElementById('stat-divisions').textContent = res.stats.divisionsCount || 0;
-
-                const tbody = document.getElementById('summary-tbody');
-                tbody.innerHTML = '';
-
-                if (res.items && res.items.length > 0) {
-                    res.items.forEach((item, idx) => {
-                        const tr = document.createElement('tr');
-                        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors';
-                        tr.innerHTML = `
-                            <td class="px-3 py-3 text-center text-slate-400 font-medium">${idx + 1}</td>
-                            <td class="px-3 py-3 font-bold text-brand-700 dark:text-brand-400">${item.regId}</td>
-                            <td class="px-3 py-3 font-mono">${item.docNo || '-'}</td>
-                            <td class="px-3 py-3">${item.from}</td>
-                            <td class="px-4 py-3 font-medium text-slate-800 dark:text-slate-100">${item.subject}</td>
-                            <td class="px-3 py-3">
-                                ${item.division ? `<span class="bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-2 py-0.5 rounded text-[11px] font-medium border border-blue-200 dark:border-blue-800/40">${item.division}</span>` : `<span class="text-amber-500 font-medium">รอคัดแยก</span>`}
-                            </td>
-                            <td class="px-3 py-3 text-center">
-                                ${item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" class="text-brand-600 hover:text-brand-700 dark:text-brand-400 p-1 rounded inline-block"><i data-lucide="file-text" class="w-4 h-4"></i></a>` : '-'}
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400 text-xs">ไม่พบข้อมูลหนังสือรับในวันที่เลือก</td></tr>`;
-                }
-
-                document.getElementById('summary-content').classList.remove('hidden');
-                lucide.createIcons();
-            } else {
-                alert('ไม่สามารถโหลดสรุปข้อมูลได้: ' + (res.message || ''));
-            }
-        }
-
-        function copySummaryShareLink() {
-            const dateVal = document.getElementById('summary-date').value;
-            const shareUrl = window.location.origin + window.location.pathname + '?p=summary&d=' + encodeURIComponent(dateVal);
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                alert('คัดลอกลิงก์สรุปประจำวันเรียบร้อยแล้ว:\n' + shareUrl);
-            }).catch(() => {
-                prompt('คัดลอกลิงก์นี้เพื่อแชร์:', shareUrl);
-            });
-        }
-
-        // TAB 4: Search Functions
-        async function executeSearch() {
-            const query = document.getElementById('search-query').value.trim();
-            if (!query) {
-                alert('กรุณาพิมพ์คำค้นหา');
-                return;
-            }
-
-            document.getElementById('search-loading').classList.remove('hidden');
-            document.getElementById('search-results-area').classList.add('hidden');
-
-            const res = await callGasApi('searchDocuments', { query: query });
-            document.getElementById('search-loading').classList.add('hidden');
-
-            if (res && res.success) {
-                const tbody = document.getElementById('search-tbody');
-                tbody.innerHTML = '';
-
-                if (res.items && res.items.length > 0) {
-                    res.items.forEach(item => {
-                        const tr = document.createElement('tr');
-                        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors';
-                        tr.innerHTML = `
-                            <td class="px-3 py-3 font-bold text-brand-700 dark:text-brand-400">${item.regId}</td>
-                            <td class="px-3 py-3">${item.date}</td>
-                            <td class="px-3 py-3 font-mono">${item.docNo || '-'}</td>
-                            <td class="px-3 py-3">${item.from}</td>
-                            <td class="px-4 py-3 font-medium text-slate-800 dark:text-slate-100">${item.subject}</td>
-                            <td class="px-3 py-3">${item.division || '<span class="text-amber-500">รอคัดแยก</span>'}</td>
-                            <td class="px-3 py-3 text-center">
-                                <div class="flex items-center justify-center gap-1.5">
-                                    ${item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" class="text-slate-400 hover:text-brand-600 p-1" title="ดูไฟล์"><i data-lucide="file-text" class="w-4 h-4"></i></a>` : ''}
-                                    <button onclick="openEditModal(${item.rowIndex})" class="text-slate-400 hover:text-blue-600 p-1" title="แก้ไข"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                                    <button onclick="openDeleteModal(${item.rowIndex}, '${item.regId}')" class="text-slate-400 hover:text-red-600 p-1" title="ลบ"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                                </div>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">ไม่พบหนังสือที่ตรงกับคำค้นหา</td></tr>`;
-                }
-
-                document.getElementById('search-results-area').classList.remove('hidden');
-                lucide.createIcons();
-            } else {
-                alert('เกิดข้อผิดพลาดในการค้นหา: ' + (res.message || ''));
-            }
-        }
-
-        // Edit Modal Handlers
-        async function openEditModal(rowIndex) {
-            showLoading('กำลังโหลดข้อมูล...');
-            const res = await callGasApi('getDocDetailForRow', { rowIndex: rowIndex });
-            hideLoading();
-
-            if (res && res.success && res.doc) {
-                const doc = res.doc;
-                document.getElementById('edit-row-index').value = rowIndex;
-                document.getElementById('edit-reg-id').value = doc.regId || '';
-                document.getElementById('edit-reg-date').value = doc.date || '';
-                document.getElementById('edit-doc-no').value = doc.docNo || '';
-                document.getElementById('edit-doc-date').value = doc.docDate || '';
-                document.getElementById('edit-from').value = doc.from || '';
-                document.getElementById('edit-to').value = doc.to || '';
-                document.getElementById('edit-subject').value = doc.subject || '';
-                document.getElementById('edit-division').value = doc.division || '';
-
-                document.getElementById('edit-modal').classList.remove('hidden');
-                lucide.createIcons();
-            } else {
-                alert('ไม่สามารถดึงข้อมูลรายการนี้ได้');
-            }
-        }
-
-        function closeEditModal() {
-            document.getElementById('edit-modal').classList.add('hidden');
-        }
-
-        async function handleEditSubmit(e) {
-            e.preventDefault();
-            showLoading('กำลังบันทึกการแก้ไข...');
-            const payload = {
-                rowIndex: document.getElementById('edit-row-index').value,
-                date: document.getElementById('edit-reg-date').value,
-                docNo: document.getElementById('edit-doc-no').value,
-                docDate: document.getElementById('edit-doc-date').value,
-                from: document.getElementById('edit-from').value,
-                to: document.getElementById('edit-to').value,
-                subject: document.getElementById('edit-subject').value,
-                division: document.getElementById('edit-division').value
+      Swal.fire({
+        title: 'ยืนยันการคัดแยกหนังสือ?',
+        text: isAllSelected ? "คุณเลือกครบทุกรายการแล้ว" : "คุณยังเลือกไม่ครบทุกรายการ",
+        icon: 'question', showCancelButton: true, confirmButtonColor: '#00C853',
+        cancelButtonColor: '#6c757d', confirmButtonText: '<span class="text-dark fw-bold">ยืนยัน</span>', cancelButtonText: 'ยกเลิก',
+        background: '#1a1a1a', color: '#fff'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          playClickSound();
+          document.getElementById('loadingOverlay').style.display = 'flex';
+          startLoadingSound();
+          
+          google.script.run.withSuccessHandler(() => {
+            stopLoadingSound();
+            playSuccessSound();
+            
+            document.getElementById('loadingText').innerHTML = `<i class="fa-solid fa-circle-check text-success fs-1 mb-2"></i><br>ย้ายไฟล์สำเร็จ`;
+            document.querySelector('#loadingOverlay img').style.animation = 'none';
+            let btn = document.getElementById('loadingCloseBtn');
+            btn.classList.remove('d-none');
+            btn.onclick = function() {
+              playClickSound();
+              document.getElementById('loadingOverlay').style.display = 'none';
+              document.getElementById('loadingText').innerText = "กำลังดำเนินการ...";
+              document.querySelector('#loadingOverlay img').style.animation = 'pulse-img 1s infinite alternate';
+              btn.classList.add('d-none');
+              loadPendingDocs(); 
             };
-
-            const res = await callGasApi('updateDocumentDetails', payload);
-            hideLoading();
-
-            if (res && res.success) {
-                playTone('success');
-                alert('แก้ไขข้อมูลเรียบร้อยแล้ว');
-                closeEditModal();
-                executeSearch();
-            } else {
-                playTone('error');
-                alert('เกิดข้อผิดพลาด: ' + (res.message || ''));
-            }
+          }).processSort(assignments);
         }
+      });
+    }
 
-        // Delete Modal Handlers
-        function openDeleteModal(rowIndex, regId) {
-            itemToDelete = { rowIndex: rowIndex, regId: regId };
-            document.getElementById('del-modal-reg-id').textContent = regId;
-            document.getElementById('delete-modal').classList.remove('hidden');
-            lucide.createIcons();
+    function loadSummary(dateVal = null) {
+      document.getElementById('summaryContainer').innerHTML = loadingHtml;
+      google.script.run.withSuccessHandler(renderSummary).getDailySummary(dateVal);
+    }
+
+    function renderSummary(res) {
+      document.getElementById('summaryDate').innerText = res.dateStr;
+      let container = document.getElementById('summaryContainer');
+      let html = '';
+      let hasData = false;
+      
+      for (let key in res.summaryData) {
+        let deptInfo = res.summaryData[key];
+        if (deptInfo.items.length > 0) {
+          hasData = true;
+          html += `<div class="card bg-dark border-secondary mb-3" style="border-radius: 12px; overflow: hidden;">
+                    <div class="card-header text-center border-0" style="background-color: #00d26a; color: #111; font-weight: bold; font-size: 1.2rem;">${deptInfo.name}</div>
+                    <div class="card-body px-4 py-3"><ul class="list-unstyled mb-0" style="font-size: 1.1rem; line-height: 2;">`;
+          deptInfo.items.forEach((item, index) => {
+             let { prefix, urgentTag } = getDisplayTitle(item.docType, item.subject, item.urgent);
+             
+             let fileCount = 0;
+             if (item.file1 && item.file1.includes("http")) fileCount++;
+             if (item.file2 && item.file2.includes("http")) fileCount++;
+             if (item.file3 && item.file3.includes("http")) fileCount++;
+
+             let countBadge = (fileCount > 1) ? ` <span class="badge-files-count"><i class="fa-solid fa-paperclip"></i> ${fileCount} ไฟล์</span>` : '';
+             
+             let mainText = `<span class="text-white text-decoration-none" style="cursor: pointer;" onclick="openDocumentFiles('${item.subject.replace(/'/g, "\\'")}', '${item.file1}', '${item.file2}', '${item.file3}')">${prefix}${item.subject}${urgentTag}${countBadge}</span>`;
+             
+             let editButtonHtml = isSharedView ? '' : `
+               <button class="btn-edit-item ms-2" onclick="openEditModal(${item.row})" title="แก้ไขรายการนี้">
+                 <i class="fa-solid fa-pencil"></i> แก้ไข
+               </button>
+             `;
+
+             html += `
+               <li class="mb-3 pb-2 border-bottom border-secondary d-flex justify-content-between align-items-start gap-2">
+                 <div>${index + 1}. ${mainText}</div>
+                 <div>${editButtonHtml}</div>
+               </li>
+             `;
+          });
+          html += `</ul></div></div>`;
         }
+      }
+      if (!hasData) html = '<h4 class="text-center text-success mt-5"><i class="fa-solid fa-inbox"></i> ไม่มีหนังสือเข้าในวันที่เลือกครับ</h4>';
+      container.innerHTML = html;
+    }
 
-        function openDeleteModalForSelectedDoc() {
-            const rowIndex = document.getElementById('sort-doc-select').value;
-            const regId = document.getElementById('s-reg-id').textContent;
-            if (rowIndex && regId) {
-                openDeleteModal(rowIndex, regId);
-            }
+    function copyWebAppLink() {
+       playClickSound();
+       let currentUrl = (window.location.hostname.includes("github.io")) ? (window.location.origin + window.location.pathname) : "https://script.google.com/macros/s/AKfycbzjyjmmMIIapD8c_dJp3ITSVGAnkWFcfSwWg4Nx1I-VUS9jCw4lscVtIV5JdQ3Wn8sX/exec"; 
+       let selectedDate = document.getElementById('summaryDatePicker').value;
+       let url = currentUrl + "?p=summary&d=" + selectedDate; 
+       
+       navigator.clipboard.writeText(url).then(() => {
+         playSuccessSound();
+         Swal.fire({
+           title: 'สำเร็จ!', 
+           text: 'คัดลอกลิงก์เรียบร้อย (ผู้เปิดจากลิงก์นี้จะดูได้อย่างเดียว ไม่เห็นปุ่มแก้ไข)', 
+           icon: 'success',
+           background: '#1a1a1a', color: '#fff', confirmButtonColor: '#00C853',
+           confirmButtonText: '<span class="text-dark fw-bold">ตกลง</span>'
+         });
+       });
+    }
+
+    let editModalInstance = null;
+
+    function openEditModal(row) {
+      playClickSound();
+      document.getElementById('loadingOverlay').style.display = 'flex';
+      startLoadingSound();
+      document.getElementById('loadingText').innerText = "กำลังดึงข้อมูล...";
+      
+      google.script.run.withSuccessHandler(function(doc) {
+        stopLoadingSound();
+        document.getElementById('loadingOverlay').style.display = 'none';
+        document.getElementById('loadingText').innerText = "กำลังดำเนินการ...";
+        
+        document.getElementById('editRow').value = doc.row;
+        document.getElementById('editRegId').innerText = doc.regId;
+        document.getElementById('editDept').value = doc.dept;
+        document.getElementById('editUrgent').value = doc.urgent;
+        document.getElementById('editDocType').value = doc.docType;
+        document.getElementById('editDocNum').value = doc.docNum;
+        document.getElementById('editSender').value = doc.sender;
+        document.getElementById('editReceiver').value = doc.receiver;
+        document.getElementById('editSubject').value = doc.subject;
+        
+        document.getElementById('editFile1').value = "";
+        document.getElementById('editFile2').value = "";
+        document.getElementById('editFile3').value = "";
+        
+        for(let i=1; i<=3; i++) {
+          let url = doc["file" + i];
+          let statusContainer = document.getElementById("file" + i + "Status");
+          if(url && url.includes("drive.google.com")) {
+            statusContainer.innerHTML = `
+              <div class="d-flex align-items-center gap-2">
+                <a href="${url}" target="_blank" class="badge bg-secondary text-white text-decoration-none">ดูไฟล์ ${i}</a>
+                <div class="form-check form-check-inline mb-0">
+                  <input class="form-check-input" type="checkbox" id="delFile${i}">
+                  <label class="form-check-label text-danger small" for="delFile${i}">ลบไฟล์นี้</label>
+                </div>
+              </div>
+            `;
+          } else if(url === "รับหนังสือจากพลนำสาร" && i === 1) {
+            statusContainer.innerHTML = `<span class="badge bg-dark text-muted border border-secondary">พลนำสาร (ไม่มีไฟล์)</span>`;
+          } else {
+            statusContainer.innerHTML = `<span class="text-muted small">- ไม่มีไฟล์ -</span>`;
+          }
         }
-
-        function closeDeleteModal() {
-            itemToDelete = null;
-            document.getElementById('delete-modal').classList.add('hidden');
+        
+        if(!editModalInstance) {
+          editModalInstance = new bootstrap.Modal(document.getElementById('editDocModal'));
         }
+        editModalInstance.show();
+      }).getDocDetailForRow(row);
+    }
 
-        async function confirmExecuteDelete() {
-            if (!itemToDelete) return;
-            showLoading('กำลังลบหนังสือ...');
-            const res = await callGasApi('deleteDocumentEntry', { rowIndex: itemToDelete.rowIndex });
-            hideLoading();
-            closeDeleteModal();
+    async function handleEditFormSubmit(e) {
+      e.preventDefault();
+      playClickSound();
+      
+      let row = document.getElementById('editRow').value;
+      let payload = {
+        row: row,
+        dept: document.getElementById('editDept').value,
+        urgent: document.getElementById('editUrgent').value,
+        docType: document.getElementById('editDocType').value,
+        docNum: document.getElementById('editDocNum').value,
+        sender: document.getElementById('editSender').value,
+        receiver: document.getElementById('editReceiver').value,
+        subject: document.getElementById('editSubject').value,
+        removeFile1: document.getElementById('delFile1') ? document.getElementById('delFile1').checked : false,
+        removeFile2: document.getElementById('delFile2') ? document.getElementById('delFile2').checked : false,
+        removeFile3: document.getElementById('delFile3') ? document.getElementById('delFile3').checked : false
+      };
+      
+      let f1 = document.getElementById('editFile1').files[0];
+      let f2 = document.getElementById('editFile2').files[0];
+      let f3 = document.getElementById('editFile3').files[0];
+      if (f1) payload.newFile1 = await getBase64(f1);
+      if (f2) payload.newFile2 = await getBase64(f2);
+      if (f3) payload.newFile3 = await getBase64(f3);
+      
+      editModalInstance.hide();
+      document.getElementById('loadingOverlay').style.display = 'flex';
+      startLoadingSound();
+      document.getElementById('loadingText').innerText = "กำลังบันทึกและย้ายไฟล์...";
+      
+      google.script.run.withSuccessHandler(function() {
+        stopLoadingSound();
+        playSuccessSound();
+        
+        document.getElementById('loadingOverlay').style.display = 'none';
+        document.getElementById('loadingText').innerText = "กำลังดำเนินการ...";
+        
+        Swal.fire({
+          title: 'สำเร็จ!',
+          text: 'บันทึกการแก้ไขและย้ายไฟล์เรียบร้อยแล้วครับ',
+          icon: 'success',
+          background: '#1a1a1a', color: '#fff', confirmButtonColor: '#00C853',
+          confirmButtonText: '<span class="text-dark fw-bold">ตกลง</span>'
+        }).then(() => {
+          loadSummary(document.getElementById('summaryDatePicker').value);
+        });
+      }).updateDocumentDetails(payload);
+    }
 
-            if (res && res.success) {
-                playTone('success');
-                alert('ลบหนังสือเรียบร้อยแล้ว');
-                loadPendingSortDocs();
-                if (!document.getElementById('pane-search').classList.contains('hidden')) {
-                    executeSearch();
-                }
-            } else {
-                playTone('error');
-                alert('เกิดข้อผิดพลาดในการลบ: ' + (res.message || ''));
-            }
+    // ฟังก์ชันยืนยันการลบเอกสาร
+    function confirmDeleteCurrentDoc() {
+      playClickSound();
+      let row = document.getElementById('editRow').value;
+      let regId = document.getElementById('editRegId').innerText;
+      let subject = document.getElementById('editSubject').value;
+
+      Swal.fire({
+        title: 'ยืนยันการลบเอกสาร?',
+        html: `
+          <div class="text-warning fs-5 mb-2">ทะเบียน: ${regId}</div>
+          <div class="text-white small mb-3 text-truncate">เรื่อง: ${subject}</div>
+          <div class="text-danger small">⚠️ ข้อมูลในระบบและไฟล์แนบใน Google Drive ทั้งหมดจะถูกลบทิ้งลงถังขยะทันที!</div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<span class="text-white fw-bold"><i class="fa-solid fa-trash-can"></i> ยืนยันการลบ</span>',
+        cancelButtonText: 'ยกเลิก',
+        background: '#1a1a1a',
+        color: '#fff'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          playClickSound();
+          editModalInstance.hide();
+          
+          document.getElementById('loadingOverlay').style.display = 'flex';
+          startLoadingSound();
+          document.getElementById('loadingText').innerText = "กำลังลบข้อมูลและไฟล์...";
+
+          google.script.run.withSuccessHandler(function() {
+            stopLoadingSound();
+            playSuccessSound();
+
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('loadingText').innerText = "กำลังดำเนินการ...";
+
+            Swal.fire({
+              title: 'ลบสำเร็จ!',
+              text: 'ลบเอกสารและไฟล์แนบเรียบร้อยแล้วครับ',
+              icon: 'success',
+              background: '#1a1a1a', color: '#fff', confirmButtonColor: '#00C853',
+              confirmButtonText: '<span class="text-dark fw-bold">ตกลง</span>'
+            }).then(() => {
+              loadSummary(document.getElementById('summaryDatePicker').value);
+            });
+          }).deleteDocumentEntry(row);
         }
-    </script>
+      });
+    }
+
+    function handleSearchSubmit(e) {
+      e.preventDefault();
+      playClickSound();
+      
+      let params = {
+        dept: document.getElementById('searchDept').value,
+        startDate: document.getElementById('searchStart').value,
+        endDate: document.getElementById('searchEnd').value,
+        keyword: document.getElementById('searchKeyword').value
+      };
+      document.getElementById('searchResultsContainer').innerHTML = loadingHtml;
+      google.script.run
+        .withSuccessHandler(renderSearchResults)
+        .withFailureHandler(err => document.getElementById('searchResultsContainer').innerHTML = '<h3 class="text-center text-danger mt-5">เกิดข้อผิดพลาด: ' + err.message + '</h3>')
+        .searchDocuments(params);
+    }
+
+    function renderSearchResults(data) {
+      document.getElementById('searchResultCount').innerText = data.length + " รายการ";
+      let container = document.getElementById('searchResultsContainer');
+      if (data.length === 0) {
+        container.innerHTML = '<h4 class="text-center text-warning mt-5"><i class="fa-solid fa-folder-open"></i> ไม่พบข้อมูลที่ตรงกับเงื่อนไขครับ</h4>';
+        return;
+      }
+      let html = '';
+      data.forEach(item => {
+        let { prefix, urgentTag } = getDisplayTitle(item.docType, item.subject, item.urgent);
+        
+        let fileCount = 0;
+        if (item.file1 && item.file1.includes("http")) fileCount++;
+        if (item.file2 && item.file2.includes("http")) fileCount++;
+        if (item.file3 && item.file3.includes("http")) fileCount++;
+
+        let countBadge = (fileCount > 1) ? ` <span class="badge-files-count"><i class="fa-solid fa-paperclip"></i> ${fileCount} ไฟล์</span>` : '';
+        
+        let mainLinkOrText = `<span class="text-success text-decoration-underline fw-bold fs-5" style="cursor: pointer;" onclick="openDocumentFiles('${item.subject.replace(/'/g, "\\'")}', '${item.file1}', '${item.file2}', '${item.file3}')">${item.subject}${urgentTag}${countBadge}</span>`;
+
+        let badgeHtml = prefix ? `<span class="text-muted fw-bold">[${item.docType}]</span><br>` : "";
+
+        html += `
+          <div class="card bg-dark border-secondary" style="border-radius: 12px;">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="badge bg-secondary fs-6">ทะเบียน: ${item.regId}</span>
+                <span class="text-yellow fw-bold">${item.dateTh}</span>
+              </div>
+              <div class="lh-base mt-3">
+                ${badgeHtml}
+                ${mainLinkOrText}
+              </div>
+              <div class="text-muted mt-3 pt-2 border-top border-secondary">
+                <i class="fa-solid fa-user-check"></i> ผู้รับ: ${item.receiver}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+  </script>
 </body>
 </html>
