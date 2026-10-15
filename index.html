@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบรับหนังสือ กอ.ปัตตานี</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: '#f0fdf4',
+                100: '#dcfce7',
+                500: '#22c55e',
+                600: '#16a34a',
+                700: '#15803d',
+                800: '#166534',
+                900: '#14532d',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        * { font-family: 'Sarabun', sans-serif; }
+        .tab-active {
+            border-bottom: 2px solid #16a34a;
+            color: #16a34a;
+            font-weight: 600;
+        }
+        .dark .tab-active {
+            border-bottom: 2px solid #22c55e;
+            color: #22c55e;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('register')">
+                    <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/50 flex items-center justify-center text-brand-700 dark:text-brand-400 font-bold border border-brand-500/20 shadow-sm">
+                        กอ.
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-800 dark:text-slate-100 leading-tight">ระบบรับหนังสือ</h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">กลุ่มงานอำนวยการ กอ.ปัตตานี</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden md:flex space-x-1" id="main-nav">
+                    <button onclick="switchTab('register')" id="tab-register" class="tab-btn px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> ลงทะเบียนรับ
+                    </button>
+                    <button onclick="switchTab('sort')" id="tab-sort" class="tab-btn px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-2">
+                        <i data-lucide="layers" class="w-4 h-4"></i> คัดแยกหนังสือ
+                    </button>
+                    <button onclick="switchTab('summary')" id="tab-summary" class="tab-btn px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-2">
+                        <i data-lucide="calendar-check" class="w-4 h-4"></i> สรุปงานประจำวัน
+                    </button>
+                    <button onclick="switchTab('search')" id="tab-search" class="tab-btn px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-2">
+                        <i data-lucide="search" class="w-4 h-4"></i> ค้นหาหนังสือ
+                    </button>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <!-- Dark Mode Toggle Button -->
+                    <button id="theme-toggle" onclick="toggleDarkMode()" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="สลับโหมดมืด/สว่าง">
+                        <i data-lucide="moon" id="theme-toggle-dark-icon" class="w-5 h-5"></i>
+                        <i data-lucide="sun" id="theme-toggle-light-icon" class="w-5 h-5 hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation Bar -->
+        <div class="flex md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 justify-around text-xs" id="mobile-nav">
+            <button onclick="switchTab('register')" id="m-tab-register" class="flex flex-col items-center py-1 text-brand-600 font-semibold">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i><span>ลงทะเบียน</span>
+            </button>
+            <button onclick="switchTab('sort')" id="m-tab-sort" class="flex flex-col items-center py-1 text-slate-500">
+                <i data-lucide="layers" class="w-5 h-5"></i><span>คัดแยก</span>
+            </button>
+            <button onclick="switchTab('summary')" id="m-tab-summary" class="flex flex-col items-center py-1 text-slate-500">
+                <i data-lucide="calendar-check" class="w-5 h-5"></i><span>สรุปงาน</span>
+            </button>
+            <button onclick="switchTab('search')" id="m-tab-search" class="flex flex-col items-center py-1 text-slate-500">
+                <i data-lucide="search" class="w-5 h-5"></i><span>ค้นหา</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- TAB 1: Register Form -->
+        <section id="pane-register" class="tab-pane max-w-2xl mx-auto">
+            <div class="flex justify-center mb-6">
+                <img src="https://lh3.googleusercontent.com/d/10WI6mit7FqMj4egYW1gY_YobkKp1A9YU" alt="ตราสัญลักษณ์ กอ.ปัตตานี" class="max-w-[320px] w-full h-auto drop-shadow-md">
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 transition-colors duration-200">
+                <div class="flex justify-between items-center mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <i data-lucide="file-plus" class="w-5 h-5 text-brand-600"></i> ลงทะเบียนรับหนังสือใหม่
+                    </h2>
+                    <span class="text-xs bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300 px-2.5 py-1 rounded-full border border-brand-200 dark:border-brand-800/50">
+                        เลขรับอัตโนมัติ
+                    </span>
+                </div>
+
+                <form id="register-form" onsubmit="handleRegisterSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">เลขทะเบียนรับ</label>
+                            <input type="text" id="reg-id" readonly class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 font-bold focus:outline-none" value="กำลังดึงเลขรับ...">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">วันที่รับหนังสือ <span class="text-red-500">*</span></label>
+                            <input type="date" id="reg-date" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">เลขที่หนังสือภายนอก</label>
+                            <input type="text" id="reg-doc-no" placeholder="เช่น กษ 0601/1234" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">ลงวันที่ในหนังสือ <span class="text-red-500">*</span></label>
+                            <input type="date" id="reg-doc-date" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">จาก (หน่วยงานต้นสังกัด) <span class="text-red-500">*</span></label>
+                        <input type="text" id="reg-from" required placeholder="ระบุชื่อหน่วยงาน/บุคคลผู้ส่ง" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">ถึง <span class="text-red-500">*</span></label>
+                        <input type="text" id="reg-to" required value="นายกองค์การบริหารส่วนจังหวัดปัตตานี" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">เรื่อง <span class="text-red-500">*</span></label>
+                        <textarea id="reg-subject" required rows="3" placeholder="ระบุหัวข้อเรื่องตามหนังสือ" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">ไฟล์แนบหนังสือ (PDF หรือ รูปภาพ) <span class="text-red-500">*</span></label>
+                        <input type="file" id="reg-file" required accept="application/pdf,image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-slate-700 dark:file:text-slate-200">
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" id="btn-submit-reg" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all">
+                            <i data-lucide="check" class="w-5 h-5"></i> บันทึกข้อมูล
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB 2: Sort / Categorization Form -->
+        <section id="pane-sort" class="tab-pane hidden max-w-5xl mx-auto">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 transition-colors duration-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            <i data-lucide="layers" class="w-5 h-5 text-brand-600"></i> งานคัดแยกหนังสือ
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">เลือกหนังสือที่ยังไม่ได้คัดแยก เพื่อระบุหน่วยงานรับผิดชอบ</p>
+                    </div>
+                    <button onclick="loadPendingSortDocs()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> รีเฟรชรายการ
+                    </button>
+                </div>
+
+                <div id="sort-loading" class="text-center py-12 hidden">
+                    <i data-lucide="loader" class="w-8 h-8 animate-spin mx-auto text-brand-600 mb-2"></i>
+                    <p class="text-sm text-slate-500">กำลังโหลดรายการรอคัดแยก...</p>
+                </div>
+
+                <div id="sort-empty" class="text-center py-12 hidden">
+                    <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400">
+                        <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-500"></i>
+                    </div>
+                    <p class="text-base font-semibold text-slate-700 dark:text-slate-300">ไม่มีหนังสือค้างคัดแยก</p>
+                    <p class="text-xs text-slate-400 mt-1">หนังสือทั้งหมดได้รับการจัดสรรฝ่ายเรียบร้อยแล้ว</p>
+                </div>
+
+                <div id="sort-content" class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">เลือกหนังสือที่ต้องการคัดแยก <span class="text-red-500">*</span></label>
+                        <select id="sort-doc-select" onchange="handleSortSelectDoc(this.value)" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2.5 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            <option value="">-- กรุณาเลือกหนังสือ --</option>
+                        </select>
+                    </div>
+
+                    <!-- Selected Doc Detail Box -->
+                    <div id="sort-selected-detail" class="hidden bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm space-y-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div><span class="text-slate-500">เลขทะเบียนรับ:</span> <span id="s-reg-id" class="font-bold text-brand-700 dark:text-brand-400"></span></div>
+                            <div><span class="text-slate-500">วันที่รับ:</span> <span id="s-reg-date" class="font-medium text-slate-800 dark:text-slate-200"></span></div>
+                            <div><span class="text-slate-500">เลขที่หนังสือ:</span> <span id="s-doc-no" class="font-medium text-slate-800 dark:text-slate-200"></span></div>
+                            <div><span class="text-slate-500">จาก:</span> <span id="s-from" class="font-medium text-slate-800 dark:text-slate-200"></span></div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-200 dark:border-slate-700 text-xs">
+                            <span class="text-slate-500">เรื่อง:</span>
+                            <p id="s-subject" class="font-medium text-slate-800 dark:text-slate-200 mt-0.5"></p>
+                        </div>
+                        <div class="pt-2 flex justify-end">
+                            <a id="s-link" href="#" target="_blank" class="inline-flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 dark:text-brand-400 font-semibold underline">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> เปิดดูไฟล์หนังสือต้นฉบับ
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Sort Allocation Form -->
+                    <form id="sort-form" onsubmit="handleSortSubmit(event)" class="space-y-4 pt-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">มอบหมายสำนัก/กอง/กลุ่มงาน <span class="text-red-500">*</span></label>
+                            <select id="sort-division" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                <option value="">-- เลือกหน่วยงานรับผิดชอบ --</option>
+                                <option value="สำนักปลัด อบจ.">สำนักปลัด อบจ.</option>
+                                <option value="กองคลัง">กองคลัง</option>
+                                <option value="กองช่าง">กองช่าง</option>
+                                <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
+                                <option value="กองการศึกษา ศาสนาและวัฒนธรรม">กองการศึกษา ศาสนาและวัฒนธรรม</option>
+                                <option value="กองสาธารณสุข">กองสาธารณสุข</option>
+                                <option value="กองพัสดุและทรัพย์สิน">กองพัสดุและทรัพย์สิน</option>
+                                <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
+                                <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+                                <option value="กลุ่มงานอำนวยการ">กลุ่มงานอำนวยการ</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">หมายเหตุ / ความเห็นการส่งมอบ</label>
+                            <input type="text" id="sort-remark" placeholder="เช่น ด่วนที่สุด, ดำเนินการตามระเบียบ" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+
+                        <div class="pt-4 flex gap-3">
+                            <button type="submit" id="btn-submit-sort" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all">
+                                <i data-lucide="check" class="w-5 h-5"></i> บันทึกผลการคัดแยก
+                            </button>
+                            <button type="button" onclick="openDeleteModalForSelectedDoc()" id="btn-del-sort" class="hidden px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/40 dark:hover:bg-red-900/60 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-800 font-medium transition-colors flex items-center gap-1.5" title="ลบหนังสือฉบับนี้">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i> ลบหนังสือ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: Daily Summary -->
+        <section id="pane-summary" class="tab-pane hidden max-w-6xl mx-auto">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 transition-colors duration-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            <i data-lucide="calendar-check" class="w-5 h-5 text-brand-600"></i> สรุปงานประจำวัน
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">สรุปรายการรับหนังสือและสถิติแยกตามหน่วยงาน</p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="date" id="summary-date" onchange="loadDailySummary()" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        <button onclick="copySummaryShareLink()" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors" title="คัดลอกลิงก์สรุปประจำวันเพื่อแชร์">
+                            <i data-lucide="share-2" class="w-3.5 h-3.5"></i> แชร์
+                        </button>
+                    </div>
+                </div>
+
+                <div id="summary-loading" class="text-center py-12 hidden">
+                    <i data-lucide="loader" class="w-8 h-8 animate-spin mx-auto text-brand-600 mb-2"></i>
+                    <p class="text-sm text-slate-500">กำลังประมวลผลสรุปข้อมูล...</p>
+                </div>
+
+                <div id="summary-content" class="space-y-6">
+                    <!-- Stat Cards -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-brand-50 dark:bg-brand-950/30 border border-brand-200 dark:border-brand-900/50 rounded-xl p-4">
+                            <p class="text-xs text-brand-700 dark:text-brand-300 font-medium">รับทั้งหมดวันนี้</p>
+                            <p id="stat-total" class="text-2xl font-black text-brand-800 dark:text-brand-200 mt-1">0</p>
+                        </div>
+                        <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-xl p-4">
+                            <p class="text-xs text-blue-700 dark:text-blue-300 font-medium">คัดแยกแล้ว</p>
+                            <p id="stat-sorted" class="text-2xl font-black text-blue-800 dark:text-blue-200 mt-1">0</p>
+                        </div>
+                        <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl p-4">
+                            <p class="text-xs text-amber-700 dark:text-amber-300 font-medium">รอคัดแยก</p>
+                            <p id="stat-pending" class="text-2xl font-black text-amber-800 dark:text-amber-200 mt-1">0</p>
+                        </div>
+                        <div class="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/50 rounded-xl p-4">
+                            <p class="text-xs text-purple-700 dark:text-purple-300 font-medium">หน่วยงานรับมอบ</p>
+                            <p id="stat-divisions" class="text-2xl font-black text-purple-800 dark:text-purple-200 mt-1">0</p>
+                        </div>
+                    </div>
+
+                    <!-- Summary Table -->
+                    <div class="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+                            <thead class="bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-200 font-semibold border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="px-3 py-3 w-16 text-center">ลำดับ</th>
+                                    <th class="px-3 py-3 w-24">เลขรับ</th>
+                                    <th class="px-3 py-3 w-28">เลขที่หนังสือ</th>
+                                    <th class="px-3 py-3 w-36">จาก</th>
+                                    <th class="px-4 py-3">เรื่อง</th>
+                                    <th class="px-3 py-3 w-36">ส่งมอบให้</th>
+                                    <th class="px-3 py-3 w-16 text-center">ไฟล์</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summary-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-800">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: Search Documents -->
+        <section id="pane-search" class="tab-pane hidden max-w-6xl mx-auto">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 transition-colors duration-200">
+                <div class="flex justify-between items-center mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            <i data-lucide="search" class="w-5 h-5 text-brand-600"></i> ค้นหาหนังสือ
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">สืบค้นจากเลขรับ, เลขที่หนังสือ, หน่วยงาน หรือเรื่อง</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mb-6">
+                    <input type="text" id="search-query" onkeypress="if(event.key==='Enter') executeSearch()" placeholder="พิมพ์คำค้นหา..." class="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    <button onclick="executeSearch()" class="bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-lg text-sm flex items-center gap-1.5 transition-colors">
+                        <i data-lucide="search" class="w-4 h-4"></i> ค้นหา
+                    </button>
+                </div>
+
+                <div id="search-loading" class="text-center py-12 hidden">
+                    <i data-lucide="loader" class="w-8 h-8 animate-spin mx-auto text-brand-600 mb-2"></i>
+                    <p class="text-sm text-slate-500">กำลังค้นหาข้อมูล...</p>
+                </div>
+
+                <div id="search-results-area" class="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl hidden">
+                    <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+                        <thead class="bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-200 font-semibold border-b border-slate-200 dark:border-slate-700">
+                            <tr>
+                                <th class="px-3 py-3 w-20">เลขรับ</th>
+                                <th class="px-3 py-3 w-24">วันที่รับ</th>
+                                <th class="px-3 py-3 w-28">เลขที่หนังสือ</th>
+                                <th class="px-3 py-3 w-36">จาก</th>
+                                <th class="px-4 py-3">เรื่อง</th>
+                                <th class="px-3 py-3 w-32">ส่งมอบ</th>
+                                <th class="px-3 py-3 w-20 text-center">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="search-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-800">
+                            <!-- Results -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Edit / Detail Modal -->
+    <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">
+                <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                    <i data-lucide="edit-3" class="w-4 h-4 text-brand-600"></i> แก้ไขรายละเอียดหนังสือ
+                </h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="edit-form" onsubmit="handleEditSubmit(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="edit-row-index">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">เลขทะเบียนรับ</label>
+                        <input type="text" id="edit-reg-id" readonly class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">วันที่รับ</label>
+                        <input type="date" id="edit-reg-date" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">เลขที่หนังสือ</label>
+                        <input type="text" id="edit-doc-no" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">ลงวันที่</label>
+                        <input type="date" id="edit-doc-date" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">จาก</label>
+                    <input type="text" id="edit-from" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">ถึง</label>
+                    <input type="text" id="edit-to" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">เรื่อง</label>
+                    <textarea id="edit-subject" required rows="3" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">หน่วยงานรับมอบ</label>
+                    <select id="edit-division" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
+                        <option value="">-- ยังไม่คัดแยก --</option>
+                        <option value="สำนักปลัด อบจ.">สำนักปลัด อบจ.</option>
+                        <option value="กองคลัง">กองคลัง</option>
+                        <option value="กองช่าง">กองช่าง</option>
+                        <option value="กองยุทธศาสตร์และงบประมาณ">กองยุทธศาสตร์และงบประมาณ</option>
+                        <option value="กองการศึกษา ศาสนาและวัฒนธรรม">กองการศึกษา ศาสนาและวัฒนธรรม</option>
+                        <option value="กองสาธารณสุข">กองสาธารณสุข</option>
+                        <option value="กองพัสดุและทรัพย์สิน">กองพัสดุและทรัพย์สิน</option>
+                        <option value="กองสวัสดิการสังคม">กองสวัสดิการสังคม</option>
+                        <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+                        <option value="กลุ่มงานอำนวยการ">กลุ่มงานอำนวยการ</option>
+                    </select>
+                </div>
+
+                <div class="pt-4 flex gap-2">
+                    <button type="submit" id="btn-save-edit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2 rounded-lg transition-colors">
+                        บันทึกการแก้ไข
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                        ยกเลิก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div id="delete-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200 dark:border-slate-700 text-center">
+            <div class="w-12 h-12 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center mx-auto mb-3 text-red-600 dark:text-red-400">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-1">ยืนยันการลบหนังสือ</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                คุณแน่ใจหรือไม่ว่าต้องการลบหนังสือเลขรับ <span id="del-modal-reg-id" class="font-bold text-red-600"></span>? การกระทำนี้ไม่สามารถย้อนกลับได้
+            </p>
+            <div class="flex gap-2">
+                <button onclick="confirmExecuteDelete()" id="btn-confirm-delete" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg text-xs transition-colors">
+                    ยืนยันลบ
+                </button>
+                <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition-colors">
+                    ยกเลิก
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex flex-col items-center justify-center hidden">
+        <img src="https://lh3.googleusercontent.com/d/1VQthGbAj9unc8lSrjaxQwOTZA7Akw9qx" alt="กำลังประมวลผล" class="w-[360px] md:w-[440px] max-w-[90vw] h-auto drop-shadow-2xl mb-4">
+        <p id="loading-text" class="text-white text-base font-medium tracking-wide animate-pulse">กำลังบันทึกข้อมูล กรุณารอสักครู่...</p>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Google Apps Script Web App Deployment Endpoint
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzjyjmmMIIapD8c_dJp3ITSVGAnkWFcfSwWg4Nx1I-VUS9jCw4lscVtIV5JdQ3Wn8sX/exec";
+
+        let pendingDocsCache = [];
+        let itemToDelete = null;
+
+        // Initialize Lucide Icons & Default Values
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initTheme();
+            setTodayDefaults();
+
+            // Check URL parameters for direct view (e.g. daily summary link)
+            const urlParams = new URLSearchParams(window.location.search);
+            const p = urlParams.get('p');
+            const d = urlParams.get('d');
+            if (p === 'summary') {
+                if (d) document.getElementById('summary-date').value = d;
+                switchTab('summary');
+            } else {
+                fetchNextRegistrationId();
+            }
+        });
+
+        // Universal API Bridge to GAS (using text/plain to avoid CORS preflight options)
+        async function callGasApi(action, data = {}) {
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: action, data: data })
+                });
+                return await response.json();
+            } catch (err) {
+                console.error("API Call Error:", err);
+                return { success: false, message: "เชื่อมต่อเซิร์ฟเวอร์ขัดข้อง: " + err.toString() };
+            }
+        }
+
+        // Web Audio Feedback (Tone Synthesizer)
+        function playTone(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                const now = ctx.currentTime;
+
+                if (type === 'success') {
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(164.81, now + 0.15);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                }
+            } catch (e) {
+                console.log("Audio not supported or blocked by user interaction");
+            }
+        }
+
+        // Dark Mode Logic
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
+                document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
+            }
+        }
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+                document.getElementById('theme-toggle-dark-icon').classList.add('hidden');
+                document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
+            }
+        }
+
+        // Navigation Tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+            const targetPane = document.getElementById('pane-' + tabId);
+            if (targetPane) targetPane.classList.remove('hidden');
+
+            document.querySelectorAll('#main-nav .tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+            const activeNavBtn = document.getElementById('tab-' + tabId);
+            if (activeNavBtn) activeNavBtn.classList.add('tab-active');
+
+            if (tabId === 'register') {
+                fetchNextRegistrationId();
+            } else if (tabId === 'sort') {
+                loadPendingSortDocs();
+            } else if (tabId === 'summary') {
+                loadDailySummary();
+            }
+            lucide.createIcons();
+        }
+
+        function setTodayDefaults() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('reg-date').value = today;
+            document.getElementById('reg-doc-date').value = today;
+            document.getElementById('summary-date').value = today;
+        }
+
+        function showLoading(text) {
+            document.getElementById('loading-text').innerText = text || 'กำลังประมวลผล กรุณารอสักครู่...';
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+        }
+
+        // TAB 1: Register Functions
+        async function fetchNextRegistrationId() {
+            const res = await callGasApi('getNextId');
+            if (res && res.success) {
+                document.getElementById('reg-id').value = res.nextId;
+            } else {
+                document.getElementById('reg-id').value = "ไม่สามารถดึงเลขได้";
+            }
+        }
+
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64Data = reader.result.split(',')[1];
+                    resolve({
+                        base64: base64Data,
+                        mimeType: file.type,
+                        name: file.name
+                    });
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('reg-file');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('กรุณาแนบไฟล์หนังสือ');
+                return;
+            }
+
+            showLoading('กำลังอัปโหลดไฟล์และบันทึกข้อมูล...');
+            try {
+                const fileObj = await readFileAsBase64(fileInput.files[0]);
+                const payload = {
+                    date: document.getElementById('reg-date').value,
+                    docNo: document.getElementById('reg-doc-no').value,
+                    docDate: document.getElementById('reg-doc-date').value,
+                    from: document.getElementById('reg-from').value,
+                    to: document.getElementById('reg-to').value,
+                    subject: document.getElementById('reg-subject').value,
+                    fileData: fileObj
+                };
+
+                const res = await callGasApi('saveRegistration', payload);
+                hideLoading();
+
+                if (res && res.success) {
+                    playTone('success');
+                    alert('บันทึกข้อมูลเรียบร้อยแล้ว! เลขทะเบียนรับคือ: ' + res.registeredId);
+                    document.getElementById('register-form').reset();
+                    setTodayDefaults();
+                    fetchNextRegistrationId();
+                } else {
+                    playTone('error');
+                    alert('เกิดข้อผิดพลาด: ' + (res.message || 'ไม่สามารถบันทึกได้'));
+                }
+            } catch (err) {
+                hideLoading();
+                playTone('error');
+                alert('เกิดข้อผิดพลาดในการประมวลผลไฟล์: ' + err.toString());
+            }
+        }
+
+        // TAB 2: Sort Functions
+        async function loadPendingSortDocs() {
+            document.getElementById('sort-loading').classList.remove('hidden');
+            document.getElementById('sort-empty').classList.add('hidden');
+            document.getElementById('sort-content').classList.add('hidden');
+            document.getElementById('sort-selected-detail').classList.add('hidden');
+            document.getElementById('btn-del-sort').classList.add('hidden');
+
+            const res = await callGasApi('getPendingDocs');
+            document.getElementById('sort-loading').classList.add('hidden');
+
+            if (res && res.success && res.docs && res.docs.length > 0) {
+                pendingDocsCache = res.docs;
+                const select = document.getElementById('sort-doc-select');
+                select.innerHTML = '<option value="">-- กรุณาเลือกหนังสือ (' + res.docs.length + ' รายการ) --</option>';
+                res.docs.forEach(doc => {
+                    const opt = document.createElement('option');
+                    opt.value = doc.rowIndex;
+                    opt.textContent = `[เลขรับ ${doc.regId}] ${doc.subject} (จาก: ${doc.from})`;
+                    select.appendChild(opt);
+                });
+                document.getElementById('sort-content').classList.remove('hidden');
+            } else {
+                document.getElementById('sort-empty').classList.remove('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        function handleSortSelectDoc(rowIndex) {
+            const doc = pendingDocsCache.find(d => String(d.rowIndex) === String(rowIndex));
+            const detailBox = document.getElementById('sort-selected-detail');
+            const delBtn = document.getElementById('btn-del-sort');
+
+            if (doc) {
+                document.getElementById('s-reg-id').textContent = doc.regId;
+                document.getElementById('s-reg-date').textContent = doc.date;
+                document.getElementById('s-doc-no').textContent = doc.docNo || '-';
+                document.getElementById('s-from').textContent = doc.from;
+                document.getElementById('s-subject').textContent = doc.subject;
+                
+                const link = document.getElementById('s-link');
+                if (doc.fileUrl) {
+                    link.href = doc.fileUrl;
+                    link.classList.remove('hidden');
+                } else {
+                    link.classList.add('hidden');
+                }
+
+                detailBox.classList.remove('hidden');
+                delBtn.classList.remove('hidden');
+            } else {
+                detailBox.classList.add('hidden');
+                delBtn.classList.add('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        async function handleSortSubmit(e) {
+            e.preventDefault();
+            const rowIndex = document.getElementById('sort-doc-select').value;
+            const division = document.getElementById('sort-division').value;
+            const remark = document.getElementById('sort-remark').value;
+
+            if (!rowIndex) {
+                alert('กรุณาเลือกหนังสือที่ต้องการคัดแยก');
+                return;
+            }
+
+            showLoading('กำลังบันทึกการคัดแยก...');
+            const res = await callGasApi('processSort', {
+                rowIndex: rowIndex,
+                division: division,
+                remark: remark
+            });
+            hideLoading();
+
+            if (res && res.success) {
+                playTone('success');
+                alert('บันทึกผลการคัดแยกเรียบร้อยแล้ว');
+                document.getElementById('sort-form').reset();
+                loadPendingSortDocs();
+            } else {
+                playTone('error');
+                alert('เกิดข้อผิดพลาด: ' + (res.message || 'ไม่สามารถบันทึกได้'));
+            }
+        }
+
+        // TAB 3: Summary Functions
+        async function loadDailySummary() {
+            const dateVal = document.getElementById('summary-date').value;
+            document.getElementById('summary-loading').classList.remove('hidden');
+            document.getElementById('summary-content').classList.add('hidden');
+
+            const res = await callGasApi('getDailySummary', { date: dateVal });
+            document.getElementById('summary-loading').classList.add('hidden');
+
+            if (res && res.success) {
+                document.getElementById('stat-total').textContent = res.stats.total || 0;
+                document.getElementById('stat-sorted').textContent = res.stats.sorted || 0;
+                document.getElementById('stat-pending').textContent = res.stats.pending || 0;
+                document.getElementById('stat-divisions').textContent = res.stats.divisionsCount || 0;
+
+                const tbody = document.getElementById('summary-tbody');
+                tbody.innerHTML = '';
+
+                if (res.items && res.items.length > 0) {
+                    res.items.forEach((item, idx) => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors';
+                        tr.innerHTML = `
+                            <td class="px-3 py-3 text-center text-slate-400 font-medium">${idx + 1}</td>
+                            <td class="px-3 py-3 font-bold text-brand-700 dark:text-brand-400">${item.regId}</td>
+                            <td class="px-3 py-3 font-mono">${item.docNo || '-'}</td>
+                            <td class="px-3 py-3">${item.from}</td>
+                            <td class="px-4 py-3 font-medium text-slate-800 dark:text-slate-100">${item.subject}</td>
+                            <td class="px-3 py-3">
+                                ${item.division ? `<span class="bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-2 py-0.5 rounded text-[11px] font-medium border border-blue-200 dark:border-blue-800/40">${item.division}</span>` : `<span class="text-amber-500 font-medium">รอคัดแยก</span>`}
+                            </td>
+                            <td class="px-3 py-3 text-center">
+                                ${item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" class="text-brand-600 hover:text-brand-700 dark:text-brand-400 p-1 rounded inline-block"><i data-lucide="file-text" class="w-4 h-4"></i></a>` : '-'}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400 text-xs">ไม่พบข้อมูลหนังสือรับในวันที่เลือก</td></tr>`;
+                }
+
+                document.getElementById('summary-content').classList.remove('hidden');
+                lucide.createIcons();
+            } else {
+                alert('ไม่สามารถโหลดสรุปข้อมูลได้: ' + (res.message || ''));
+            }
+        }
+
+        function copySummaryShareLink() {
+            const dateVal = document.getElementById('summary-date').value;
+            const shareUrl = window.location.origin + window.location.pathname + '?p=summary&d=' + encodeURIComponent(dateVal);
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert('คัดลอกลิงก์สรุปประจำวันเรียบร้อยแล้ว:\n' + shareUrl);
+            }).catch(() => {
+                prompt('คัดลอกลิงก์นี้เพื่อแชร์:', shareUrl);
+            });
+        }
+
+        // TAB 4: Search Functions
+        async function executeSearch() {
+            const query = document.getElementById('search-query').value.trim();
+            if (!query) {
+                alert('กรุณาพิมพ์คำค้นหา');
+                return;
+            }
+
+            document.getElementById('search-loading').classList.remove('hidden');
+            document.getElementById('search-results-area').classList.add('hidden');
+
+            const res = await callGasApi('searchDocuments', { query: query });
+            document.getElementById('search-loading').classList.add('hidden');
+
+            if (res && res.success) {
+                const tbody = document.getElementById('search-tbody');
+                tbody.innerHTML = '';
+
+                if (res.items && res.items.length > 0) {
+                    res.items.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors';
+                        tr.innerHTML = `
+                            <td class="px-3 py-3 font-bold text-brand-700 dark:text-brand-400">${item.regId}</td>
+                            <td class="px-3 py-3">${item.date}</td>
+                            <td class="px-3 py-3 font-mono">${item.docNo || '-'}</td>
+                            <td class="px-3 py-3">${item.from}</td>
+                            <td class="px-4 py-3 font-medium text-slate-800 dark:text-slate-100">${item.subject}</td>
+                            <td class="px-3 py-3">${item.division || '<span class="text-amber-500">รอคัดแยก</span>'}</td>
+                            <td class="px-3 py-3 text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    ${item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" class="text-slate-400 hover:text-brand-600 p-1" title="ดูไฟล์"><i data-lucide="file-text" class="w-4 h-4"></i></a>` : ''}
+                                    <button onclick="openEditModal(${item.rowIndex})" class="text-slate-400 hover:text-blue-600 p-1" title="แก้ไข"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                    <button onclick="openDeleteModal(${item.rowIndex}, '${item.regId}')" class="text-slate-400 hover:text-red-600 p-1" title="ลบ"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">ไม่พบหนังสือที่ตรงกับคำค้นหา</td></tr>`;
+                }
+
+                document.getElementById('search-results-area').classList.remove('hidden');
+                lucide.createIcons();
+            } else {
+                alert('เกิดข้อผิดพลาดในการค้นหา: ' + (res.message || ''));
+            }
+        }
+
+        // Edit Modal Handlers
+        async function openEditModal(rowIndex) {
+            showLoading('กำลังโหลดข้อมูล...');
+            const res = await callGasApi('getDocDetailForRow', { rowIndex: rowIndex });
+            hideLoading();
+
+            if (res && res.success && res.doc) {
+                const doc = res.doc;
+                document.getElementById('edit-row-index').value = rowIndex;
+                document.getElementById('edit-reg-id').value = doc.regId || '';
+                document.getElementById('edit-reg-date').value = doc.date || '';
+                document.getElementById('edit-doc-no').value = doc.docNo || '';
+                document.getElementById('edit-doc-date').value = doc.docDate || '';
+                document.getElementById('edit-from').value = doc.from || '';
+                document.getElementById('edit-to').value = doc.to || '';
+                document.getElementById('edit-subject').value = doc.subject || '';
+                document.getElementById('edit-division').value = doc.division || '';
+
+                document.getElementById('edit-modal').classList.remove('hidden');
+                lucide.createIcons();
+            } else {
+                alert('ไม่สามารถดึงข้อมูลรายการนี้ได้');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }
+
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            showLoading('กำลังบันทึกการแก้ไข...');
+            const payload = {
+                rowIndex: document.getElementById('edit-row-index').value,
+                date: document.getElementById('edit-reg-date').value,
+                docNo: document.getElementById('edit-doc-no').value,
+                docDate: document.getElementById('edit-doc-date').value,
+                from: document.getElementById('edit-from').value,
+                to: document.getElementById('edit-to').value,
+                subject: document.getElementById('edit-subject').value,
+                division: document.getElementById('edit-division').value
+            };
+
+            const res = await callGasApi('updateDocumentDetails', payload);
+            hideLoading();
+
+            if (res && res.success) {
+                playTone('success');
+                alert('แก้ไขข้อมูลเรียบร้อยแล้ว');
+                closeEditModal();
+                executeSearch();
+            } else {
+                playTone('error');
+                alert('เกิดข้อผิดพลาด: ' + (res.message || ''));
+            }
+        }
+
+        // Delete Modal Handlers
+        function openDeleteModal(rowIndex, regId) {
+            itemToDelete = { rowIndex: rowIndex, regId: regId };
+            document.getElementById('del-modal-reg-id').textContent = regId;
+            document.getElementById('delete-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function openDeleteModalForSelectedDoc() {
+            const rowIndex = document.getElementById('sort-doc-select').value;
+            const regId = document.getElementById('s-reg-id').textContent;
+            if (rowIndex && regId) {
+                openDeleteModal(rowIndex, regId);
+            }
+        }
+
+        function closeDeleteModal() {
+            itemToDelete = null;
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
+
+        async function confirmExecuteDelete() {
+            if (!itemToDelete) return;
+            showLoading('กำลังลบหนังสือ...');
+            const res = await callGasApi('deleteDocumentEntry', { rowIndex: itemToDelete.rowIndex });
+            hideLoading();
+            closeDeleteModal();
+
+            if (res && res.success) {
+                playTone('success');
+                alert('ลบหนังสือเรียบร้อยแล้ว');
+                loadPendingSortDocs();
+                if (!document.getElementById('pane-search').classList.contains('hidden')) {
+                    executeSearch();
+                }
+            } else {
+                playTone('error');
+                alert('เกิดข้อผิดพลาดในการลบ: ' + (res.message || ''));
+            }
+        }
+    </script>
+</body>
+</html>
